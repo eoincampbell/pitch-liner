@@ -24,6 +24,16 @@
         if (closed.some(function (c) { return c === '1'; })) {
             url += '&closed=' + encodeURIComponent(closed.join(','));
         }
+        // Encode camera state
+        var cam = md.map.getCamera();
+        var camStr = [
+            cam.center[0].toFixed(6),
+            cam.center[1].toFixed(6),
+            cam.zoom.toFixed(2),
+            (cam.bearing || 0).toFixed(1),
+            (cam.pitch || 0).toFixed(1)
+        ].join(',');
+        url += '&view=' + encodeURIComponent(camStr);
         if (navigator.clipboard) {
             navigator.clipboard.writeText(url).then(function () {
                 md.showSuccess('Share URL copied to clipboard!');
@@ -88,7 +98,18 @@
                 }
                 md.setActivePath(md.paths.length - 1);
                 md.refreshActivePathUi();
-                if (md.paths[0].pins.length > 0) md.map.setCamera({ center: [md.paths[0].pins[0].lon, md.paths[0].pins[0].lat], zoom: md.DEFAULT_ZOOM });
+                // Restore camera state
+                if (params.view) {
+                    var vp = params.view.split(',');
+                    if (vp.length >= 3) {
+                        var camOpts = { center: [parseFloat(vp[0]), parseFloat(vp[1])], zoom: parseFloat(vp[2]) };
+                        if (vp.length >= 4) camOpts.bearing = parseFloat(vp[3]);
+                        if (vp.length >= 5) camOpts.pitch = parseFloat(vp[4]);
+                        md.map.setCamera(camOpts);
+                    }
+                } else if (md.paths[0].pins.length > 0) {
+                    md.map.setCamera({ center: [md.paths[0].pins[0].lon, md.paths[0].pins[0].lat], zoom: md.DEFAULT_ZOOM });
+                }
             } catch (e) { /* ignore bad hash */ }
         }
     }

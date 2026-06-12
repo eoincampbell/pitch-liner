@@ -27,20 +27,37 @@ public class AzureMapsProxyController(IHttpClientFactory httpClientFactory, ICon
     }
 
     /// <summary>
-    /// Proxies address search requests to the Azure Maps Search API.
+    /// Proxies search requests to the Azure Maps Fuzzy Search API.
+    /// Runs both a fuzzy search and a POI-specific search in parallel, then merges
+    /// deduplicated results for better local POI coverage (e.g., GAA clubs, sports grounds).
     /// </summary>
     [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string q)
+    public async Task<IActionResult> Search([FromQuery] string q, [FromQuery] double? lat, [FromQuery] double? lon)
     {
         if (string.IsNullOrWhiteSpace(q) || q.Length < 3)
             return BadRequest(new { error = "Query must be at least 3 characters." });
 
         var client = httpClientFactory.CreateClient("AzureMaps");
-        var url = $"https://atlas.microsoft.com/search/address/json?api-version=1.0&query={Uri.EscapeDataString(q)}&subscription-key={SubscriptionKey}&limit=5";
+        var locationParams = lat.HasValue && lon.HasValue
+            ? $"&lat={lat.Value:F6}&lon={lon.Value:F6}&radius=50000"
+            : "";
+        var commonParams = $"&subscription-key={SubscriptionKey}&countrySet=IE&language=en-IE{locationParams}";
 
-        var response = await client.GetAsync(url);
-        var content = await response.Content.ReadAsStringAsync();
-        return Content(content, "application/json");
+        var fuzzyUrl = $"https://atlas.microsoft.com/search/fuzzy/json?api-version=1.0&query={Uri.EscapeDataString(q)}&limit=6&typeahead=true{commonParams}";
+        var poiUrl = $"https://atlas.microsoft.com/search/poi/json?api-version=1.0&query={Uri.EscapeDataString(q)}&limit=4&typeahead=true{commonParams}";
+
+        var fuzzyTask = client.GetStringAsync(fuzzyUrl);
+        var poiTask = client.GetStringAsync(poiUrl);
+
+        await Task.WhenAll(fuzzyTask, poiTask);
+
+        var fuzzyJson = await fuzzyTask;
+        var poiJson = await poiTask;
+
+        // Merge results: POI results first (more relevant for local places), then fuzzy
+        // Client-side handles deduplication by position
+        var merged = $"{{\"fuzzy\":{fuzzyJson},\"poi\":{poiJson}}}";
+        return Content(merged, "application/json");
     }
 
     /// <summary>

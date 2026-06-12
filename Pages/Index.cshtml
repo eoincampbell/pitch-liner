@@ -21,39 +21,60 @@
     <!-- Stats panel -->
     <div id="stats-panel">
         <div id="panel-content">
-        <div id="stats-body"></div>
-        <div id="area-info"></div>
-        <div id="overall-total" class="overall-total" style="display:none;"></div>
-        <hr class="panel-divider" />
-        <div class="btn-row">
-            <button class="btn btn-dark" onclick="newPath()">New Path</button>
-            <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
-            <button class="btn btn-warning" onclick="undoLastPin()">Undo</button>
-            <button class="btn btn-secondary" onclick="closeShape()">Close Shape</button>
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-success" onclick="saveCsv()">Save</button>
-            <button class="btn btn-primary" onclick="document.getElementById('load-input').click()">Load</button>
-            <button class="btn btn-purple" onclick="shareUrl()">Share</button>
-            <input type="file" id="load-input" accept=".csv" style="display:none" onchange="loadCsv(event)" />
-        </div>
-        <div class="btn-row">
-            <button class="btn btn-info" onclick="showHelp()">Help</button>
-        </div>
-        <hr class="panel-divider" />
-        <div class="panel-options">
-            <label><input type="checkbox" id="show-labels" onchange="toggleLabels()" /> Pin Labels</label>
-        </div>
-        <div class="panel-options">
-            <label>Unit:
-                <select id="unit-select" onchange="changeUnit()">
-                    <option value="m">Metres</option>
-                    <option value="yd">Yards</option>
-                    <option value="km">Kilometres</option>
-                    <option value="mi">Miles</option>
-                </select>
-            </label>
-        </div>
+            <div id="stats-body"></div>
+            <div id="area-info"></div>
+            <div id="overall-total" class="overall-total" style="display:none;"></div>
+
+            <hr class="panel-divider" />
+
+            <!-- Drawing group -->
+            <div class="btn-group">
+                <span class="btn-group-label">Drawing</span>
+                <div class="btn-row">
+                    <button class="btn btn-dark" onclick="newPath()" title="Start a new path">&#x2795; Path</button>
+                    <button class="btn btn-warning" onclick="undoLastPin()" title="Remove last pin">&#x21A9; Undo</button>
+                    <button class="btn btn-secondary" onclick="closeShape()" title="Close shape and calculate area">&#x25B3; Close</button>
+                </div>
+            </div>
+
+            <!-- Data group -->
+            <div class="btn-group">
+                <span class="btn-group-label">Data</span>
+                <div class="btn-row">
+                    <button class="btn btn-success" onclick="saveCsv()" title="Download CSV">&#x1F4BE; Save</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('load-input').click()" title="Load CSV file">&#x1F4C2; Load</button>
+                    <button class="btn btn-purple" onclick="shareUrl()" title="Copy share URL to clipboard">&#x1F517; Share</button>
+                    <input type="file" id="load-input" accept=".csv" style="display:none" onchange="loadCsv(event)" />
+                </div>
+            </div>
+
+            <!-- Actions group -->
+            <div class="btn-group">
+                <div class="btn-row">
+                    <button class="btn btn-danger btn-sm" onclick="clearAll()" title="Remove all paths and pins">Clear All</button>
+                    <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
+                </div>
+            </div>
+
+            <hr class="panel-divider" />
+
+            <!-- Options -->
+            <div class="panel-options-row">
+                <label class="option-toggle" title="Show pin numbers on map">
+                    <input type="checkbox" id="show-labels" onchange="toggleLabels()" />
+                    <span class="toggle-slider"></span>
+                    <span class="option-text">Pin Labels</span>
+                </label>
+                <label class="option-select" title="Distance unit">
+                    <span class="option-text">Unit</span>
+                    <select id="unit-select" onchange="changeUnit()">
+                        <option value="m">m</option>
+                        <option value="yd">yd</option>
+                        <option value="km">km</option>
+                        <option value="mi">mi</option>
+                    </select>
+                </label>
+            </div>
         </div>
     </div>
     <!-- Slide toggle tab -->
@@ -89,43 +110,50 @@
     <div class="modal-overlay" id="help-modal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeHelp()">&times;</button>
-            <h2>How to Use Map Distance</h2>
+            <h2>Pitch Liner – Map Distance Tool</h2>
             <h4>Placing Pins</h4>
             <ul>
-                <li>Click anywhere on the map to place a pin on the current path.</li>
-                <li>Each pin is connected to the previous one with a dotted line.</li>
-                <li>The table shows coordinates, distance from the previous pin, and cumulative total for each path.</li>
+                <li>Click anywhere on the map to drop a pin on the active path.</li>
+                <li>Pins are connected by dotted lines; distances appear in the stats panel.</li>
             </ul>
             <h4>Multiple Paths</h4>
             <ul>
-                <li><strong>New Path</strong> – Starts a new path. The previous path remains on the map with its own colour.</li>
-                <li>Each path has a distinct colour for pins and lines.</li>
-                <li>Each path's stats are shown separately with an overall total across all paths.</li>
+                <li><strong>&#x2795; Path</strong> – Create a new path with a unique colour.</li>
+                <li>Click a path name in the panel to rename it.</li>
+                <li>Use the <em>Set Active</em> button to switch between paths.</li>
             </ul>
-            <h4>Buttons</h4>
+            <h4>Drawing Controls</h4>
             <ul>
-                <li><strong>Clear All</strong> – Removes all paths, pins, lines, and resets the table.</li>
-                <li><strong>Undo</strong> – Removes the last placed pin on the current path.</li>
-                <li><strong>Close Shape</strong> – Connects the last pin to the first on the current path and calculates area (3+ pins).</li>
-                <li><strong>Save</strong> – Downloads all path data as a CSV file.</li>
-                <li><strong>Load</strong> – Upload a previously saved CSV to restore all paths.</li>
-                <li><strong>Share</strong> – Copies a shareable URL containing all path data to the clipboard.</li>
-                <li><strong>Help</strong> – Opens this help window.</li>
+                <li><strong>&#x21A9; Undo</strong> – Remove the last pin on the active path.</li>
+                <li><strong>&#x25B3; Close</strong> – Connect last pin to first, creating a closed shape with an area calculation (requires 3+ pins).</li>
+            </ul>
+            <h4>Data Controls</h4>
+            <ul>
+                <li><strong>&#x1F4BE; Save</strong> – Download all path data (including closed state) as a CSV file.</li>
+                <li><strong>&#x1F4C2; Load</strong> – Upload a previously saved CSV to restore paths, closed shapes, and map position.</li>
+                <li><strong>&#x1F517; Share</strong> – Copy a URL to the clipboard that encodes all paths, closed shapes, and the current map view (position, zoom, tilt, rotation).</li>
             </ul>
             <h4>Options</h4>
             <ul>
-                <li><strong>Pin Labels</strong> – Toggle to show/hide pin numbers and distances on the map.</li>
-                <li><strong>Unit</strong> – Switch between metres, yards, kilometres, and miles.</li>
+                <li><strong>Pin Labels</strong> – Toggle to show/hide numbered labels and running distances on the map.</li>
+                <li><strong>Unit</strong> – Switch between metres (m), yards (yd), kilometres (km), and miles (mi). Affects all distances and areas.</li>
             </ul>
             <h4>Map Controls</h4>
             <ul>
                 <li><strong>+</strong> / <strong>−</strong> – Zoom in or out.</li>
                 <li><strong>⌂</strong> – Reset to default view.</li>
-                <li><strong>🗺</strong> – Toggle aerial / road view.</li>
+                <li><strong>🗺</strong> – Toggle between satellite and road map view.</li>
+                <li>Right-click + drag to rotate and tilt the map (bearing &amp; pitch are saved in Share links).</li>
             </ul>
             <h4>Search</h4>
             <ul>
-                <li>Type an address in the search bar to navigate to a location.</li>
+                <li>Type in the search bar to find addresses, landmarks, sports grounds, and points of interest.</li>
+                <li>Click a result to centre the map on that location.</li>
+            </ul>
+            <h4>Keyboard &amp; Touch</h4>
+            <ul>
+                <li>Scroll wheel to zoom; pinch to zoom on touch devices.</li>
+                <li>Two-finger rotate on touch; Ctrl + drag to rotate on desktop.</li>
             </ul>
         </div>
     </div>

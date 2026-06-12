@@ -7,7 +7,10 @@
     function saveCsv() {
         var hasData = md.paths.some(function (p) { return p.pins.length > 0; });
         if (!hasData) return;
-        var csv = 'Path,Path Name,Closed,Pin #,Lat,Long,Distance from Previous Pin,Total Distance\n';
+        // Save camera state as a metadata comment line
+        var cam = md.map.getCamera();
+        var csv = '# view:' + cam.center[0].toFixed(6) + ',' + cam.center[1].toFixed(6) + ',' + cam.zoom.toFixed(2) + ',' + (cam.bearing || 0).toFixed(1) + ',' + (cam.pitch || 0).toFixed(1) + '\n';
+        csv += 'Path,Path Name,Closed,Pin #,Lat,Long,Distance from Previous Pin,Total Distance\n';
         for (var pi = 0; pi < md.paths.length; pi++) {
             var path = md.paths[pi];
             for (var i = 0; i < path.pins.length; i++) {
@@ -42,6 +45,15 @@
                 if (lines.length < 2) throw new Error('CSV file is empty or has no data rows.');
                 if (lines.length - 1 > md.MAX_CSV_ROWS) {
                     throw new Error('CSV file has too many rows. Maximum is ' + md.MAX_CSV_ROWS + '.');
+                }
+
+                // Parse optional camera metadata from comment lines
+                var savedView = null;
+                while (lines.length > 0 && lines[0].charAt(0) === '#') {
+                    var meta = lines.shift();
+                    if (meta.indexOf('# view:') === 0) {
+                        savedView = meta.substring(7).trim();
+                    }
                 }
 
                 var header = lines[0].toLowerCase();
@@ -124,9 +136,20 @@
                 md.setActivePath(md.paths.length - 1);
                 md.refreshActivePathUi();
 
-                var firstPin = md.paths[0].pins[0];
-                if (firstPin) {
-                    md.map.setCamera({ center: [firstPin.lon, firstPin.lat], zoom: md.DEFAULT_ZOOM });
+                // Restore camera state
+                if (savedView) {
+                    var vp = savedView.split(',');
+                    if (vp.length >= 3) {
+                        var camOpts = { center: [parseFloat(vp[0]), parseFloat(vp[1])], zoom: parseFloat(vp[2]) };
+                        if (vp.length >= 4) camOpts.bearing = parseFloat(vp[3]);
+                        if (vp.length >= 5) camOpts.pitch = parseFloat(vp[4]);
+                        md.map.setCamera(camOpts);
+                    }
+                } else {
+                    var firstPin = md.paths[0].pins[0];
+                    if (firstPin) {
+                        md.map.setCamera({ center: [firstPin.lon, firstPin.lat], zoom: md.DEFAULT_ZOOM });
+                    }
                 }
             } catch (err) {
                 md.showError('Load failed: ' + err.message);
