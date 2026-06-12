@@ -60,4 +60,4 @@ nunit-*.xml
 appsettings.Development.json
 .vs
 *.user
-
+*.pubxml

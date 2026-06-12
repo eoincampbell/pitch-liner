@@ -7,16 +7,15 @@
     function saveCsv() {
         var hasData = md.paths.some(function (p) { return p.pins.length > 0; });
         if (!hasData) return;
-        var csv = 'Path,Path Name,Pin #,Lat,Long,Distance from Previous Pin,Total Distance,Closed\n';
+        var csv = 'Path,Path Name,Closed,Pin #,Lat,Long,Distance from Previous Pin,Total Distance\n';
         for (var pi = 0; pi < md.paths.length; pi++) {
             var path = md.paths[pi];
             for (var i = 0; i < path.pins.length; i++) {
                 var p = path.pins[i];
                 var safeName = '"' + path.name.replace(/"/g, '""') + '"';
-                csv += (pi + 1) + ',' + safeName + ',' + (i + 1) + ',' + p.lat.toFixed(6) + ',' + p.lon.toFixed(6) + ',' +
+                csv += (pi + 1) + ',' + safeName + ',' + (path.shapeClosed ? 'Yes' : 'No') + ',' + (i + 1) + ',' + p.lat.toFixed(6) + ',' + p.lon.toFixed(6) + ',' +
                     (i === 0 ? 'N/A' : Math.round(p.distFromPrev) + 'm') + ',' +
-                    Math.round(p.totalDistance) + 'm,' +
-                    (path.shapeClosed ? 'Yes' : 'No') + '\n';
+                    Math.round(p.totalDistance) + 'm\n';
             }
         }
         var blob = new Blob([csv], { type: 'text/csv' });
@@ -55,7 +54,6 @@
 
                 md.clearAll();
 
-                var closedPaths = {};
                 for (var i = 1; i < lines.length; i++) {
                     // Handle quoted fields (path names may contain commas)
                     var cols = [];
@@ -69,34 +67,37 @@
                     }
                     cols.push(field);
 
-                    var lat, lon, pathNum, pathName, closed;
-                    if (hasNameCol) {
+                    var lat, lon, pathNum, pathName, closedVal;
+                    if (hasNameCol && hasClosedCol) {
+                        if (cols.length < 6) throw new Error('Row ' + i + ' does not have enough columns.');
+                        pathNum = parseInt(cols[0]) || 1;
+                        pathName = cols[1] || '';
+                        closedVal = cols[2] || '';
+                        lat = parseFloat(cols[4]);
+                        lon = parseFloat(cols[5]);
+                    } else if (hasNameCol) {
                         if (cols.length < 5) throw new Error('Row ' + i + ' does not have enough columns.');
                         pathNum = parseInt(cols[0]) || 1;
                         pathName = cols[1] || '';
+                        closedVal = '';
                         lat = parseFloat(cols[3]);
                         lon = parseFloat(cols[4]);
-                        closed = hasClosedCol && cols.length >= 8 ? cols[7].trim().toLowerCase() : '';
                     } else if (hasPathCol) {
                         if (cols.length < 4) throw new Error('Row ' + i + ' does not have enough columns.');
                         pathNum = parseInt(cols[0]) || 1;
                         pathName = '';
+                        closedVal = '';
                         lat = parseFloat(cols[2]);
                         lon = parseFloat(cols[3]);
-                        closed = '';
                     } else {
                         if (cols.length < 3) throw new Error('Row ' + i + ' does not have enough columns.');
                         pathNum = 1;
                         pathName = '';
+                        closedVal = '';
                         lat = parseFloat(cols[1]);
                         lon = parseFloat(cols[2]);
-                        closed = '';
                     }
                     if (isNaN(lat) || isNaN(lon)) throw new Error('Row ' + i + ' has invalid Lat/Long values.');
-
-                    if (closed === 'yes') {
-                        closedPaths[pathNum] = true;
-                    }
 
                     while (pathNum > md.paths.length) {
                         var np = md.createPathObj(md.paths.length);
@@ -106,20 +107,20 @@
                     if (pathName) {
                         md.paths[pathNum - 1].name = pathName;
                     }
+                    if (closedVal.toLowerCase() === 'yes') {
+                        md.paths[pathNum - 1]._shouldClose = true;
+                    }
                     md.currentPathIndex = pathNum - 1;
                     md.addPin(lat, lon);
                 }
-
                 // Restore closed shapes
-                for (var pathNum in closedPaths) {
-                    if (closedPaths.hasOwnProperty(pathNum)) {
-                        var idx = parseInt(pathNum) - 1;
-                        if (idx >= 0 && idx < md.paths.length) {
-                            md.restoreClosedShape(md.paths[idx]);
-                        }
+                for (var ci = 0; ci < md.paths.length; ci++) {
+                    if (md.paths[ci]._shouldClose && md.paths[ci].pins.length >= 3) {
+                        md.currentPathIndex = ci;
+                        window.closeShape();
+                        delete md.paths[ci]._shouldClose;
                     }
                 }
-
                 md.setActivePath(md.paths.length - 1);
                 md.refreshActivePathUi();
 

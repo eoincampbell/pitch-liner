@@ -79,9 +79,17 @@
         areaInfo.style.display = 'block';
     }
 
+    function lonLatToMercatorPixel(lon, lat, zoom) {
+        var scale = 256 * Math.pow(2, zoom);
+        var x = (lon + 180) / 360 * scale;
+        var latRad = lat * Math.PI / 180;
+        var y = (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * scale;
+        return [x, y];
+    }
+
     function calculateArea(path) {
         var coords = path.pins.map(function (p) {
-            return atlas.math.mercatorPixelsAtZoom([p.lon, p.lat], 20);
+            return lonLatToMercatorPixel(p.lon, p.lat, 20);
         });
         var n = coords.length, area = 0;
         for (var i = 0; i < n; i++) {
@@ -95,25 +103,7 @@
         return area * metersPerPixel * metersPerPixel;
     }
 
-    function restoreClosedShape(path) {
-        if (!path || path.pins.length < 3) return;
-        path.shapeClosed = true;
-        var first = path.pins[0], last = path.pins[path.pins.length - 1];
-        path.closingLineSource.clear();
-        path.closingLineSource.add(new atlas.data.Feature(
-            new atlas.data.LineString([[last.lon, last.lat], [first.lon, first.lat]])
-        ));
-        var ring = path.pins.map(function (p) { return [p.lon, p.lat]; });
-        ring.push(ring[0]);
-        path.fillSource.clear();
-        path.fillSource.add(new atlas.data.Feature(
-            new atlas.data.Polygon([ring])
-        ));
-        updateShapeLabel(path);
-    }
-
     window.closeShape = closeShape;
     window.updateAreaDisplay = updateAreaDisplay;
     md.updateShapeLabel = updateShapeLabel;
-    md.restoreClosedShape = restoreClosedShape;
 })(MapDistance);

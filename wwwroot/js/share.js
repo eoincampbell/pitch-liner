@@ -9,20 +9,20 @@
         if (!hasData) { md.showError('No pins to share.'); return; }
         var parts = [];
         var names = [];
-        var closedFlags = [];
+        var closed = [];
         for (var pi = 0; pi < md.paths.length; pi++) {
             if (md.paths[pi].pins.length === 0) continue;
             var coords = md.paths[pi].pins.map(function (p) { return p.lat.toFixed(6) + ',' + p.lon.toFixed(6); });
             parts.push(coords.join(';'));
             names.push(md.paths[pi].name);
-            closedFlags.push(md.paths[pi].shapeClosed ? '1' : '0');
+            closed.push(md.paths[pi].shapeClosed ? '1' : '0');
         }
         var url = window.location.origin + window.location.pathname + '#paths=' + encodeURIComponent(parts.join('|'));
         if (names.length > 0) {
             url += '&names=' + encodeURIComponent(names.join('|'));
         }
-        if (closedFlags.some(function (f) { return f === '1'; })) {
-            url += '&closed=' + encodeURIComponent(closedFlags.join('|'));
+        if (closed.some(function (c) { return c === '1'; })) {
+            url += '&closed=' + encodeURIComponent(closed.join(','));
         }
         if (navigator.clipboard) {
             navigator.clipboard.writeText(url).then(function () {
@@ -61,7 +61,7 @@
                     if (eq > -1) params[part.substring(0, eq)] = decodeURIComponent(part.substring(eq + 1));
                 });
                 var pathNames = params.names ? params.names.split('|') : [];
-                var closedFlags = params.closed ? params.closed.split('|') : [];
+                var closedFlags = params.closed ? params.closed.split(',') : [];
                 var pathStrings = (params.paths || '').split('|');
                 for (var pi = 0; pi < pathStrings.length; pi++) {
                     if (pi > 0) {
@@ -78,8 +78,12 @@
                             if (!isNaN(lat) && !isNaN(lon)) md.addPin(lat, lon);
                         }
                     });
-                    if (closedFlags[pi] === '1') {
-                        md.restoreClosedShape(md.paths[pi]);
+                }
+                // Restore closed shapes
+                for (var ci = 0; ci < closedFlags.length; ci++) {
+                    if (closedFlags[ci] === '1' && md.paths[ci] && md.paths[ci].pins.length >= 3) {
+                        md.currentPathIndex = ci;
+                        window.closeShape();
                     }
                 }
                 md.setActivePath(md.paths.length - 1);
