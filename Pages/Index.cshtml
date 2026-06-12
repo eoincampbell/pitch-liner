@@ -1,0 +1,149 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Map Distance";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Distance</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.css" />
+    <link rel="stylesheet" href="~/css/map-distance.css" asp-append-version="true" />
+    <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.js"></script>
+</head>
+<body>
+    <div id="map"></div>
+
+    <!-- Stats panel -->
+    <div id="stats-panel">
+        <div id="panel-content">
+        <div id="stats-body"></div>
+        <div id="area-info"></div>
+        <div id="overall-total" class="overall-total" style="display:none;"></div>
+        <hr class="panel-divider" />
+        <div class="btn-row">
+            <button class="btn btn-dark" onclick="newPath()">New Path</button>
+            <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            <button class="btn btn-warning" onclick="undoLastPin()">Undo</button>
+            <button class="btn btn-secondary" onclick="closeShape()">Close Shape</button>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-success" onclick="saveCsv()">Save</button>
+            <button class="btn btn-primary" onclick="document.getElementById('load-input').click()">Load</button>
+            <button class="btn btn-purple" onclick="shareUrl()">Share</button>
+            <input type="file" id="load-input" accept=".csv" style="display:none" onchange="loadCsv(event)" />
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-info" onclick="showHelp()">Help</button>
+        </div>
+        <hr class="panel-divider" />
+        <div class="panel-options">
+            <label><input type="checkbox" id="show-labels" onchange="toggleLabels()" /> Pin Labels</label>
+        </div>
+        <div class="panel-options">
+            <label>Unit:
+                <select id="unit-select" onchange="changeUnit()">
+                    <option value="m">Metres</option>
+                    <option value="yd">Yards</option>
+                    <option value="km">Kilometres</option>
+                    <option value="mi">Miles</option>
+                </select>
+            </label>
+        </div>
+        </div>
+    </div>
+    <!-- Slide toggle tab -->
+    <button id="panel-toggle" class="panel-toggle" onclick="togglePanel()" title="Toggle stats panel">&#x25C0;</button>
+
+    <!-- Branding -->
+    <div id="branding">
+        <img src="https://whitehallcolmcille.ie/wp-content/uploads/2019/06/logo.png" alt="Whitehall Colmcille GAA" />
+        <span>Whitehall Colmcille GAA</span>
+    </div>
+
+    <!-- Search bar -->
+    <div id="search-bar">
+        <input type="text" id="search-input" placeholder="Search for an address..." autocomplete="off" />
+        <div id="search-results"></div>
+    </div>
+
+    <!-- Map controls -->
+    <div id="map-controls">
+        <button class="map-ctrl-btn" onclick="mapZoom(1)" title="Zoom in">+</button>
+        <button class="map-ctrl-btn" onclick="mapZoom(-1)" title="Zoom out">−</button>
+        <button class="map-ctrl-btn" onclick="resetView()" title="Reset view">⌂</button>
+        <button class="map-ctrl-btn" onclick="toggleStyle()" title="Toggle map style">🗺</button>
+    </div>
+
+    <!-- Elevation panel -->
+    <div id="elevation-panel">
+        <h4>Elevation Profile</h4>
+        <canvas id="elevation-canvas" width="340" height="120"></canvas>
+    </div>
+
+    <!-- Help modal -->
+    <div class="modal-overlay" id="help-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHelp()">&times;</button>
+            <h2>How to Use Map Distance</h2>
+            <h4>Placing Pins</h4>
+            <ul>
+                <li>Click anywhere on the map to place a pin on the current path.</li>
+                <li>Each pin is connected to the previous one with a dotted line.</li>
+                <li>The table shows coordinates, distance from the previous pin, and cumulative total for each path.</li>
+            </ul>
+            <h4>Multiple Paths</h4>
+            <ul>
+                <li><strong>New Path</strong> – Starts a new path. The previous path remains on the map with its own colour.</li>
+                <li>Each path has a distinct colour for pins and lines.</li>
+                <li>Each path's stats are shown separately with an overall total across all paths.</li>
+            </ul>
+            <h4>Buttons</h4>
+            <ul>
+                <li><strong>Clear All</strong> – Removes all paths, pins, lines, and resets the table.</li>
+                <li><strong>Undo</strong> – Removes the last placed pin on the current path.</li>
+                <li><strong>Close Shape</strong> – Connects the last pin to the first on the current path and calculates area (3+ pins).</li>
+                <li><strong>Save</strong> – Downloads all path data as a CSV file.</li>
+                <li><strong>Load</strong> – Upload a previously saved CSV to restore all paths.</li>
+                <li><strong>Share</strong> – Copies a shareable URL containing all path data to the clipboard.</li>
+                <li><strong>Help</strong> – Opens this help window.</li>
+            </ul>
+            <h4>Options</h4>
+            <ul>
+                <li><strong>Pin Labels</strong> – Toggle to show/hide pin numbers and distances on the map.</li>
+                <li><strong>Unit</strong> – Switch between metres, yards, kilometres, and miles.</li>
+            </ul>
+            <h4>Map Controls</h4>
+            <ul>
+                <li><strong>+</strong> / <strong>−</strong> – Zoom in or out.</li>
+                <li><strong>⌂</strong> – Reset to default view.</li>
+                <li><strong>🗺</strong> – Toggle aerial / road view.</li>
+            </ul>
+            <h4>Search</h4>
+            <ul>
+                <li>Type an address in the search bar to navigate to a location.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div id="error-toast" class="toast"></div>
+    <div id="success-toast" class="toast"></div>
+
+    <!-- JS modules (order matters: config first, then helpers, then features, then init last) -->
+    <script src="~/js/config.js" asp-append-version="true"></script>
+    <script src="~/js/ui.js" asp-append-version="true"></script>
+    <script src="~/js/stats-table.js" asp-append-version="true"></script>
+    <script src="~/js/elevation.js" asp-append-version="true"></script>
+    <script src="~/js/path-manager.js" asp-append-version="true"></script>
+    <script src="~/js/area-calc.js" asp-append-version="true"></script>
+    <script src="~/js/csv-io.js" asp-append-version="true"></script>
+    <script src="~/js/share.js" asp-append-version="true"></script>
+    <script src="~/js/search.js" asp-append-version="true"></script>
+    <script src="~/js/map-init.js" asp-append-version="true"></script>
+</body>
+</html>
