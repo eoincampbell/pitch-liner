@@ -56,7 +56,7 @@
                 color: '#ffffff',
                 haloColor: colors.hex,
                 haloWidth: 2,
-                size: 14,
+                size: 21,
                 font: ['StandardFont-Bold'],
                 allowOverlap: true
             }
