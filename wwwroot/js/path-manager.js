@@ -5,8 +5,11 @@
 (function (md) {
     'use strict';
 
+    var pathIdSeq = 0;
+
     function createPathObj(index) {
         return {
+            id: 'path-' + (++pathIdSeq),
             name: 'Path ' + (index + 1),
             pins: [],
             totalDistance: 0,
@@ -83,6 +86,66 @@
         path.symbolLayer = symbolLayer;
         path.shapeLabelLayer = shapeLabelLayer;
         path.layerIds = [fillLayer.getId(), lineLayer.getId(), closingLayer.getId(), symbolLayer.getId(), shapeLabelLayer.getId()];
+
+        md.attachPinDragHandlers(path);
+    }
+
+    function findPathById(pathId) {
+        for (var i = 0; i < md.paths.length; i++) {
+            if (md.paths[i].id === pathId) return md.paths[i];
+        }
+        return null;
+    }
+
+    function indexOfPath(path) {
+        for (var i = 0; i < md.paths.length; i++) {
+            if (md.paths[i] === path) return i;
+        }
+        return -1;
+    }
+
+    function makePinFeature(path, pinIndex) {
+        var p = path.pins[pinIndex];
+        return new atlas.data.Feature(
+            new atlas.data.Point([p.lon, p.lat]),
+            { pathId: path.id, pinIndex: pinIndex }
+        );
+    }
+
+    // Rebuilds the pin markers and connecting lines of a path from its pins[] data.
+    function rebuildPathGeometry(path) {
+        path.pinSource.clear();
+        path.lineSource.clear();
+        for (var i = 0; i < path.pins.length; i++) {
+            path.pinSource.add(makePinFeature(path, i));
+            if (i > 0) {
+                var prev = path.pins[i - 1];
+                var cur = path.pins[i];
+                path.lineSource.add(new atlas.data.Feature(
+                    new atlas.data.LineString([[prev.lon, prev.lat], [cur.lon, cur.lat]])
+                ));
+            }
+        }
+    }
+
+    // Recomputes distFromPrev/totalDistance for every pin in a path.
+    function recalcPathDistances(path) {
+        var running = 0;
+        for (var i = 0; i < path.pins.length; i++) {
+            var cur = path.pins[i];
+            var dist = 0;
+            if (i > 0) {
+                var prev = path.pins[i - 1];
+                dist = atlas.math.getDistanceTo(
+                    new atlas.data.Position(prev.lon, prev.lat),
+                    new atlas.data.Position(cur.lon, cur.lat)
+                );
+            }
+            running += dist;
+            cur.distFromPrev = dist;
+            cur.totalDistance = running;
+        }
+        path.totalDistance = running;
     }
 
     function refreshActivePathUi() {
@@ -126,8 +189,6 @@
             document.getElementById('area-info').style.display = 'none';
         }
 
-        path.pinSource.add(new atlas.data.Feature(new atlas.data.Point([lon, lat])));
-
         var distFromPrev = 0;
         if (path.pins.length > 0) {
             var prev = path.pins[path.pins.length - 1];
@@ -141,6 +202,7 @@
         }
         path.totalDistance += distFromPrev;
         path.pins.push({ lat: lat, lon: lon, distFromPrev: distFromPrev, totalDistance: path.totalDistance });
+        path.pinSource.add(makePinFeature(path, path.pins.length - 1));
 
         md.updateLabels();
         md.updateTable();
@@ -161,18 +223,7 @@
         path.totalDistance -= removed.distFromPrev;
         path.elevations.pop();
 
-        path.pinSource.clear();
-        path.lineSource.clear();
-        for (var i = 0; i < path.pins.length; i++) {
-            var p = path.pins[i];
-            path.pinSource.add(new atlas.data.Feature(new atlas.data.Point([p.lon, p.lat])));
-            if (i > 0) {
-                var prev = path.pins[i - 1];
-                path.lineSource.add(new atlas.data.Feature(
-                    new atlas.data.LineString([[prev.lon, prev.lat], [p.lon, p.lat]])
-                ));
-            }
-        }
+        rebuildPathGeometry(path);
         md.updateLabels();
         md.updateTable();
         md.drawElevationChart();
@@ -260,6 +311,10 @@
     md.createPathObj = createPathObj;
     md.initPathSources = initPathSources;
     md.addPin = addPin;
+    md.rebuildPathGeometry = rebuildPathGeometry;
+    md.recalcPathDistances = recalcPathDistances;
+    md.findPathById = findPathById;
+    md.indexOfPath = indexOfPath;
     md.clearAll = clearAll;
     md.refreshActivePathUi = refreshActivePathUi;
     md.setActivePath = setActivePath;

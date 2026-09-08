@@ -11,13 +11,20 @@
             return;
         }
         path.shapeClosed = true;
+        refreshClosedShape(path);
+        updateAreaDisplay();
+    }
+
+    // Rebuilds the closing line, polygon fill and centroid label of a closed shape.
+    function refreshClosedShape(path) {
+        if (!path || !path.shapeClosed || path.pins.length < 3) return;
+
         var first = path.pins[0], last = path.pins[path.pins.length - 1];
         path.closingLineSource.clear();
         path.closingLineSource.add(new atlas.data.Feature(
             new atlas.data.LineString([[last.lon, last.lat], [first.lon, first.lat]])
         ));
 
-        // Add semi-transparent polygon fill
         var ring = path.pins.map(function (p) { return [p.lon, p.lat]; });
         ring.push(ring[0]); // close the ring
         path.fillSource.clear();
@@ -25,10 +32,7 @@
             new atlas.data.Polygon([ring])
         ));
 
-        // Add path name label at centroid
         updateShapeLabel(path);
-
-        updateAreaDisplay();
     }
 
     function updateShapeLabel(path) {
@@ -49,8 +53,8 @@
         ));
     }
 
-    function updateAreaDisplay() {
-        var path = md.curPath();
+    function updateAreaDisplay(targetPath) {
+        var path = targetPath || md.curPath();
         if (!path || !path.shapeClosed || path.pins.length < 3) {
             document.getElementById('area-info').style.display = 'none';
             return;
@@ -106,4 +110,5 @@
     window.closeShape = closeShape;
     window.updateAreaDisplay = updateAreaDisplay;
     md.updateShapeLabel = updateShapeLabel;
+    md.refreshClosedShape = refreshClosedShape;
 })(MapDistance);

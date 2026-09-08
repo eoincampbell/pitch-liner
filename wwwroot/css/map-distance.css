@@ -3,6 +3,11 @@
 html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
 #map { width: 100%; height: 100%; }
 
+/* Pin drag affordance. !important is required because the Azure Maps control
+   sets the cursor inline on its canvas container. */
+#map .pin-grab { cursor: grab !important; }
+#map .pin-grabbing { cursor: grabbing !important; }
+
 /* Stats panel */
 #stats-panel {
     position: absolute;

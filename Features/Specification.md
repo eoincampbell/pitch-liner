@@ -66,7 +66,20 @@ The application was developed incrementally across four feature rounds, document
 | Debug info box | An opt-in translucent black overlay beneath the map control buttons (bottom-right) showing the live viewport centre latitude/longitude (6 dp), zoom (2 dp), bearing and pitch (1 dp). Enabled only by appending `?debug=1` to the URL; it is never persisted in saved CSVs or shared links. |
 | Anchored panel controls | The left stats panel is a flex column: the path information (`#panel-scroll`) is the only scrollable region, while all button groups and the options row (`#panel-controls`) stay pinned to the bottom. Buttons no longer shift under the mouse pointer as path content grows or shrinks. |
 
-### 2.6 Future Ideas *(Future Ideas.md)*
+### 2.6 Moving a Pin *(018 Moving a Pin)*
+
+| Feature | Description |
+|---|---|
+| Drag an existing pin | Click and hold any pin, in any path (active or not), to drag it to a new position. Implemented in `wwwroot/js/pin-drag.js` using `mousedown`/`mousemove`/`mouseup` handlers bound to each path's pin `SymbolLayer`. |
+| Live line feedback | While dragging, the pin markers, connecting lines and on-map labels are rebuilt on every pointer move. The stats table and area readout are deferred to the drop to avoid rebuilding the whole panel continuously. |
+| Recalculation on drop | Dropping the pin recomputes `distFromPrev`/`totalDistance` for the whole path, refreshes the stats panel, per-path subtotal and overall total, and re-fetches the elevation value for the moved pin only. |
+| Closed shapes stay closed | If the path is closed, the closing line, polygon fill, centroid label and calculated area are recalculated live rather than reopening the shape. |
+| Activates the dragged path | Dragging a pin in a non-active path makes that path active. |
+| Click vs. drag | A 4&nbsp;px movement threshold distinguishes a drag from a click, and a suppression flag stops the trailing `click` event from dropping an extra pin. Map panning (`dragPanInteraction`) is disabled for the duration of the drag. |
+| Touch support | On touch devices a ~350&nbsp;ms long-press (with a 10&nbsp;px movement tolerance) is required before a pin becomes draggable, so ordinary swipes still pan the map. |
+| Cursor affordance | The map canvas container shows a `grab` cursor when hovering a pin and `grabbing` while dragging (`.pin-grab` / `.pin-grabbing` in `map-distance.css`). |
+
+### 2.7 Future Ideas *(Future Ideas.md)*
 
 Two features remain documented but not yet implemented:
 
@@ -158,6 +171,11 @@ currentUnit                      # 'm' | 'yd' | 'km' | 'mi'
 | `updateLabels()` | Rebuilds the label DataSource with pin numbers and distances for all paths. |
 | `formatDist(metres)` | Converts a metre value to the currently selected unit string. |
 | `undoLastPin()` | Pops the last pin from the current path and rebuilds its map sources. |
+| `rebuildPathGeometry(path)` | Clears and repopulates a path's pin and line DataSources from its `pins[]` array, tagging each pin feature with `{ pathId, pinIndex }`. |
+| `recalcPathDistances(path)` | Recomputes `distFromPrev`/`totalDistance` for every pin in a path and resets `path.totalDistance`. |
+| `attachPinDragHandlers(path)` | Registers the pin drag/hover handlers on a path's pin `SymbolLayer`; called from `initPathSources` so every path (boot, new path, CSV load, hash load) is covered. |
+| `refreshClosedShape(path)` | Rebuilds the closing line, polygon fill and centroid label of a closed shape. |
+| `updateElevationAt(path, pinIndex, lat, lon)` | Re-fetches the elevation for a single pin after it has been moved. |
 | `closeShape()` | Draws a closing line and triggers area calculation for the current path. |
 | `calculateArea(path)` | Computes enclosed area using the Shoelace formula on Mercator-projected pixel coordinates, then converts to real-world m². |
 | `saveCsv()` / `loadCsv(event)` | Multi-path CSV serialisation and deserialisation with validation. |
@@ -248,4 +266,5 @@ Paths are separated by `|`, pins within a path by `;`.
 | 003 | `003 Suggested features.md` | Undo, distance unit toggle, close shape/area, pin labels, elevation profile, share via URL |
 | 004 | `004 Multiple Lines.md` | Multiple paths with distinct colours, separate stats, independent totals, overall total, multi-path CSV and URL sharing |
 | 017 | `017 Misc UX Improvements.md` | Click-outside/Escape dismissal for the help modal, opt-in `?debug=1` camera info box, stats panel controls anchored to the bottom with only path info scrolling |
+| 018 | `018 Moving a Pin.md` | Click-and-hold (or long-press on touch) to drag any existing pin in any path, with live line updates and full recalculation of distances, stats, closed-shape area and elevation on drop |
 | — | `Future Ideas.md` | PWA offline support, named measurement sessions *(not yet implemented)* |

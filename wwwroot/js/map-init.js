@@ -58,6 +58,7 @@
                     map.layers.getLayerById('labelLayer').setOptions({ visible: false });
 
                     map.events.add('click', function (e) {
+                        if (md.consumePinDragClick()) return;
                         if (e.position) {
                             md.addPin(e.position[1], e.position[0]);
                         }

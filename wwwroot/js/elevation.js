@@ -22,6 +22,23 @@
             });
     }
 
+    // Re-fetches the elevation for a single pin (used after a pin is dragged).
+    function updateElevationAt(path, pinIndex, lat, lon) {
+        if (!path || pinIndex < 0) return;
+
+        function apply(value) {
+            path.elevations[pinIndex] = value;
+            if (path === md.curPath()) drawElevationChart();
+        }
+
+        fetch('/api/maps/elevation?points=' + encodeURIComponent(lon + ',' + lat))
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                apply(data.data && data.data.length > 0 ? data.data[0].elevationInMeter : null);
+            })
+            .catch(function () { apply(null); });
+    }
+
     function drawElevationChart() {
         var panel = document.getElementById('elevation-panel');
         var canvas = document.getElementById('elevation-canvas');
@@ -70,5 +87,6 @@
     }
 
     md.fetchElevation = fetchElevation;
+    md.updateElevationAt = updateElevationAt;
     md.drawElevationChart = drawElevationChart;
 })(MapDistance);
