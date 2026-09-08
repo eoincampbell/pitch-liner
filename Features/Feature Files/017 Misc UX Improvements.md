@@ -1,0 +1,5 @@
+# Misc. UX Improvements.
+
+1. When the help modal is open, you have to hit the 'x' to close it. Clicking anywhere outside the modal should close it. Especially if you've already scrolled and the x isn't visible should close it.
+2. Add a transparent black box to the bottom right of the screen below the 4 map control button. This box should also include some debug information... the current center coordinate of the viewport and the current zoom level.
+3. The buttons and tools on the left bar appear directly below the path information. As the path information grow/shrinks, the buttons can be pushed / pulled up and down the page. pressing "undo" for example, removes a pin but causes the undo button to move up and out of mouse pointer focus. The buttons should be anchored to the bottom left of this bar, and only the path information should be scrollable.

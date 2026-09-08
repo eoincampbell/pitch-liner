@@ -14,7 +14,10 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     color: #fff;
     padding: 14px 12px;
     width: 240px;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 12px;
     transition: transform 0.3s ease;
@@ -22,6 +25,21 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 }
 #stats-panel.hidden {
     transform: translateX(-100%);
+}
+#panel-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+/* Only the path information scrolls; the controls stay pinned to the bottom. */
+#panel-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+}
+#panel-controls {
+    flex: 0 0 auto;
 }
 #stats-panel table { border-collapse: collapse; width: 100%; }
 #stats-panel th, #stats-panel td { padding: 3px 6px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 11px; }
@@ -240,6 +258,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     z-index: 1000;
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 6px;
 }
 .map-ctrl-btn {
@@ -256,6 +275,21 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     justify-content: center;
 }
 .map-ctrl-btn:hover { background: rgba(0,0,0,0.9); }
+
+/* Debug info box (enabled with ?debug=1) */
+#debug-box {
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: nowrap;
+    min-width: 140px;
+}
+.debug-row { display: flex; justify-content: space-between; gap: 10px; }
+.debug-label { color: rgba(255,255,255,0.55); }
 
 /* Elevation panel */
 #elevation-panel {
@@ -345,5 +379,6 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     #location-select { max-width: 100%; font-size: 12px; padding: 8px 6px; }
     #search-input { font-size: 12px; padding: 8px 10px; }
     .map-ctrl-btn { width: 34px; height: 34px; font-size: 16px; }
+    #debug-box { font-size: 10px; padding: 4px 6px; min-width: 120px; }
     #elevation-panel { max-width: 260px; }
 }

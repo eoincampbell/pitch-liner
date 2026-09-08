@@ -58,7 +58,15 @@ The application was developed incrementally across four feature rounds, document
 | Multi-path CSV | The CSV format includes a `Path` column. Loading is backwards-compatible with single-path CSVs. |
 | Multi-path URL sharing | The `#paths=` hash format encodes multiple paths separated by `|`, with backward compatibility for legacy `#pins=` URLs. |
 
-### 2.5 Future Ideas *(Future Ideas.md)*
+### 2.5 Misc. UX Improvements *(017 Misc UX Improvements)*
+
+| Feature | Description |
+|---|---|
+| Dismissible help modal | The help modal now closes when clicking anywhere on the backdrop outside the modal, or by pressing `Escape` — useful when the close button has scrolled out of view. Matches the existing colour-picker modal behaviour. |
+| Debug info box | An opt-in translucent black overlay beneath the map control buttons (bottom-right) showing the live viewport centre latitude/longitude (6 dp), zoom (2 dp), bearing and pitch (1 dp). Enabled only by appending `?debug=1` to the URL; it is never persisted in saved CSVs or shared links. |
+| Anchored panel controls | The left stats panel is a flex column: the path information (`#panel-scroll`) is the only scrollable region, while all button groups and the options row (`#panel-controls`) stay pinned to the bottom. Buttons no longer shift under the mouse pointer as path content grows or shrinks. |
+
+### 2.6 Future Ideas *(Future Ideas.md)*
 
 Two features remain documented but not yet implemented:
 
@@ -239,4 +247,5 @@ Paths are separated by `|`, pins within a path by `;`.
 | 002 | `002 Requirements Gathering.md` | Red pins, dotted lines, map controls, save/load CSV, help modal, responsive layout, branding, address search |
 | 003 | `003 Suggested features.md` | Undo, distance unit toggle, close shape/area, pin labels, elevation profile, share via URL |
 | 004 | `004 Multiple Lines.md` | Multiple paths with distinct colours, separate stats, independent totals, overall total, multi-path CSV and URL sharing |
+| 017 | `017 Misc UX Improvements.md` | Click-outside/Escape dismissal for the help modal, opt-in `?debug=1` camera info box, stats panel controls anchored to the bottom with only path info scrolling |
 | — | `Future Ideas.md` | PWA offline support, named measurement sessions *(not yet implemented)* |

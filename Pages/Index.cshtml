@@ -21,59 +21,63 @@
     <!-- Stats panel -->
     <div id="stats-panel">
         <div id="panel-content">
-            <div id="stats-body"></div>
-            <div id="area-info"></div>
-            <div id="overall-total" class="overall-total" style="display:none;"></div>
-
-            <hr class="panel-divider" />
-
-            <!-- Drawing group -->
-            <div class="btn-group">
-                <span class="btn-group-label">Drawing</span>
-                <div class="btn-row">
-                    <button class="btn btn-dark" onclick="newPath()" title="Start a new path">&#x2795; Path</button>
-                    <button class="btn btn-warning" onclick="undoLastPin()" title="Remove last pin">&#x21A9; Undo</button>
-                    <button class="btn btn-secondary" onclick="closeShape()" title="Close shape and calculate area">&#x25B3; Close</button>
-                </div>
+            <div id="panel-scroll">
+                <div id="stats-body"></div>
+                <div id="area-info"></div>
+                <div id="overall-total" class="overall-total" style="display:none;"></div>
             </div>
 
-            <!-- Data group -->
-            <div class="btn-group">
-                <span class="btn-group-label">Data</span>
-                <div class="btn-row">
-                    <button class="btn btn-success" onclick="saveCsv()" title="Download CSV">&#x1F4BE; Save</button>
-                    <button class="btn btn-primary" onclick="document.getElementById('load-input').click()" title="Load CSV file">&#x1F4C2; Load</button>
-                    <button class="btn btn-purple" onclick="shareUrl()" title="Copy share URL to clipboard">&#x1F517; Share</button>
-                    <input type="file" id="load-input" accept=".csv" style="display:none" onchange="loadCsv(event)" />
+            <div id="panel-controls">
+                <hr class="panel-divider" />
+
+                <!-- Drawing group -->
+                <div class="btn-group">
+                    <span class="btn-group-label">Drawing</span>
+                    <div class="btn-row">
+                        <button class="btn btn-dark" onclick="newPath()" title="Start a new path">&#x2795; Path</button>
+                        <button class="btn btn-warning" onclick="undoLastPin()" title="Remove last pin">&#x21A9; Undo</button>
+                        <button class="btn btn-secondary" onclick="closeShape()" title="Close shape and calculate area">&#x25B3; Close</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Actions group -->
-            <div class="btn-group">
-                <div class="btn-row">
-                    <button class="btn btn-danger btn-sm" onclick="clearAll()" title="Remove all paths and pins">Clear All</button>
-                    <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
+                <!-- Data group -->
+                <div class="btn-group">
+                    <span class="btn-group-label">Data</span>
+                    <div class="btn-row">
+                        <button class="btn btn-success" onclick="saveCsv()" title="Download CSV">&#x1F4BE; Save</button>
+                        <button class="btn btn-primary" onclick="document.getElementById('load-input').click()" title="Load CSV file">&#x1F4C2; Load</button>
+                        <button class="btn btn-purple" onclick="shareUrl()" title="Copy share URL to clipboard">&#x1F517; Share</button>
+                        <input type="file" id="load-input" accept=".csv" style="display:none" onchange="loadCsv(event)" />
+                    </div>
                 </div>
-            </div>
 
-            <hr class="panel-divider" />
+                <!-- Actions group -->
+                <div class="btn-group">
+                    <div class="btn-row">
+                        <button class="btn btn-danger btn-sm" onclick="clearAll()" title="Remove all paths and pins">Clear All</button>
+                        <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
+                    </div>
+                </div>
 
-            <!-- Options -->
-            <div class="panel-options-row">
-                <label class="option-toggle" title="Show pin numbers on map">
-                    <input type="checkbox" id="show-labels" onchange="toggleLabels()" />
-                    <span class="toggle-slider"></span>
-                    <span class="option-text">Pin Labels</span>
-                </label>
-                <label class="option-select" title="Distance unit">
-                    <span class="option-text">Unit</span>
-                    <select id="unit-select" onchange="changeUnit()">
-                        <option value="m">m</option>
-                        <option value="yd">yd</option>
-                        <option value="km">km</option>
-                        <option value="mi">mi</option>
-                    </select>
-                </label>
+                <hr class="panel-divider" />
+
+                <!-- Options -->
+                <div class="panel-options-row">
+                    <label class="option-toggle" title="Show pin numbers on map">
+                        <input type="checkbox" id="show-labels" onchange="toggleLabels()" />
+                        <span class="toggle-slider"></span>
+                        <span class="option-text">Pin Labels</span>
+                    </label>
+                    <label class="option-select" title="Distance unit">
+                        <span class="option-text">Unit</span>
+                        <select id="unit-select" onchange="changeUnit()">
+                            <option value="m">m</option>
+                            <option value="yd">yd</option>
+                            <option value="km">km</option>
+                            <option value="mi">mi</option>
+                        </select>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
@@ -101,6 +105,17 @@
         <button class="map-ctrl-btn" onclick="mapZoom(-1)" title="Zoom out">−</button>
         <button class="map-ctrl-btn" onclick="resetView()" title="Reset view">⌂</button>
         <button class="map-ctrl-btn" onclick="toggleStyle()" title="Toggle map style">🗺</button>
+
+        <!-- Debug overlay: append ?debug=1 to the URL to display live camera info
+             (centre latitude/longitude, zoom, bearing and pitch).
+             It is a view-only aid and is never included in saved CSVs or shared links. -->
+        <div id="debug-box" style="display:none">
+            <div class="debug-row"><span class="debug-label">Lat</span><span id="debug-lat">-</span></div>
+            <div class="debug-row"><span class="debug-label">Lng</span><span id="debug-lng">-</span></div>
+            <div class="debug-row"><span class="debug-label">Zoom</span><span id="debug-zoom">-</span></div>
+            <div class="debug-row"><span class="debug-label">Bearing</span><span id="debug-bearing">-</span></div>
+            <div class="debug-row"><span class="debug-label">Pitch</span><span id="debug-pitch">-</span></div>
+        </div>
     </div>
 
     <!-- Elevation panel -->

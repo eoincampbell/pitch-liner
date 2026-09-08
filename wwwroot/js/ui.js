@@ -59,8 +59,15 @@
         if (e.target === this) closeColorPicker();
     });
 
+    document.getElementById('help-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeHelp();
+    });
+
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeColorPicker();
+        if (e.key === 'Escape') {
+            closeColorPicker();
+            closeHelp();
+        }
     });
 
     function mapZoom(delta) {
@@ -86,6 +93,24 @@
         btn.title = isHidden ? 'Show stats panel' : 'Hide stats panel';
     }
 
+    // Debug overlay - opt in with the ?debug=1 query string. Never saved or shared.
+    var debugFlag = new URLSearchParams(window.location.search).get('debug');
+    var debugEnabled = debugFlag !== null && debugFlag !== '0' && debugFlag.toLowerCase() !== 'false';
+
+    function updateDebugBox() {
+        if (!debugEnabled || !md.map) return;
+        var cam = md.map.getCamera();
+        document.getElementById('debug-lat').textContent = cam.center[1].toFixed(6);
+        document.getElementById('debug-lng').textContent = cam.center[0].toFixed(6);
+        document.getElementById('debug-zoom').textContent = cam.zoom.toFixed(2);
+        document.getElementById('debug-bearing').textContent = (cam.bearing || 0).toFixed(1) + '\u00B0';
+        document.getElementById('debug-pitch').textContent = (cam.pitch || 0).toFixed(1) + '\u00B0';
+    }
+
+    function showDebugBox() {
+        document.getElementById('debug-box').style.display = 'block';
+    }
+
     window.showError = showError;
     window.showSuccess = showSuccess;
     window.showHelp = showHelp;
@@ -101,4 +126,7 @@
     md.showSuccess = showSuccess;
     md.openColorPicker = openColorPicker;
     md.closeColorPicker = closeColorPicker;
+    md.debugEnabled = debugEnabled;
+    md.updateDebugBox = updateDebugBox;
+    md.showDebugBox = showDebugBox;
 })(MapDistance);

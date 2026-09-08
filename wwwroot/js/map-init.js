@@ -21,6 +21,13 @@
             md.map = map;
 
             map.events.add('ready', function () {
+                if (md.debugEnabled) {
+                    md.showDebugBox();
+                    md.updateDebugBox();
+                    map.events.add('move', md.updateDebugBox);
+                    map.events.add('zoom', md.updateDebugBox);
+                }
+
                 // Register a custom SVG marker pin per palette colour. This is async, so
                 // no SymbolLayer may be created until every sprite has been added.
                 var pinPromises = md.PATH_COLORS.map(function (c, i) {
