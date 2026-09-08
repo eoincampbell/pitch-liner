@@ -54,7 +54,7 @@
                 <!-- Actions group -->
                 <div class="btn-group">
                     <div class="btn-row">
-                        <button class="btn btn-danger btn-sm" onclick="clearAll()" title="Remove all paths and pins">Clear All</button>
+                        <button class="btn btn-danger btn-sm" onclick="openClearConfirm()" title="Remove all paths and pins (asks for confirmation)">Clear All</button>
                         <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
                     </div>
                 </div>
@@ -129,6 +129,18 @@
         <div class="modal-content">
             <button class="modal-close" onclick="closeHelp()">&times;</button>
             <h2>Pitch Liner – Map Distance Tool</h2>
+            <h4>Keyboard Shortcuts</h4>
+            <table class="shortcut-table">
+                <tbody>
+                    <tr><td><kbd>Shift</kbd> + <kbd>?</kbd></td><td>Open this help window.</td></tr>
+                    <tr><td><kbd>Esc</kbd></td><td>Close any open window.</td></tr>
+                    <tr><td><kbd>n</kbd></td><td>Create a new path.</td></tr>
+                    <tr><td><kbd>z</kbd></td><td>Undo the last action.</td></tr>
+                    <tr><td><kbd>c</kbd></td><td>Close the current active path.</td></tr>
+                    <tr><td><kbd>a</kbd></td><td>Clear all paths (asks for confirmation first).</td></tr>
+                </tbody>
+            </table>
+            <p class="shortcut-note">A brief on-screen message confirms each action. Shortcuts are ignored while you are typing in the search bar or renaming a path.</p>
             <h4>Placing Pins</h4>
             <ul>
                 <li>Click anywhere on the map to drop a pin on the active path.</li>
@@ -137,15 +149,16 @@
             </ul>
             <h4>Multiple Paths</h4>
             <ul>
-                <li><strong>&#x2795; Path</strong> – Create a new path with a unique colour.</li>
+                <li><strong>&#x2795; Path</strong> – Create a new path with a unique colour (shortcut <kbd>n</kbd>).</li>
                 <li>Click a path name in the panel to rename it.</li>
-                <li>Click the coloured dot beside a path name to pick a different colour from the palette.</li>
-                <li>Use the <em>Set Active</em> button to switch between paths.</li>
+                <li>Click the coloured dot beside a path name to open the colour picker and choose a different colour from the palette. Lines, pins, the shape fill and its label all change immediately.</li>
+                <li>Use the <em>Set Active</em> button to switch between paths – new pins are always added to the active path.</li>
             </ul>
             <h4>Drawing Controls</h4>
             <ul>
-                <li><strong>&#x21A9; Undo</strong> – Remove the last pin on the active path.</li>
-                <li><strong>&#x25B3; Close</strong> – Connect last pin to first, creating a closed shape with an area calculation (requires 3+ pins).</li>
+                <li><strong>&#x21A9; Undo</strong> – Remove the last pin on the active path (shortcut <kbd>z</kbd>).</li>
+                <li><strong>&#x25B3; Close</strong> – Connect last pin to first, creating a closed shape with an area calculation (requires 3+ pins; shortcut <kbd>c</kbd>).</li>
+                <li><strong>Clear All</strong> – Remove every path and pin. You will be asked to confirm first (shortcut <kbd>a</kbd>).</li>
             </ul>
             <h4>Data Controls</h4>
             <ul>
@@ -177,11 +190,15 @@
                 <li>Type in the search bar to find addresses, landmarks, sports grounds, and points of interest.</li>
                 <li>Click a result to centre the map on that location.</li>
             </ul>
-            <h4>Keyboard &amp; Touch</h4>
+            <h4>Mouse &amp; Touch</h4>
             <ul>
                 <li>Scroll wheel to zoom; pinch to zoom on touch devices.</li>
                 <li>Two-finger rotate on touch; Ctrl + drag to rotate on desktop.</li>
                 <li>On touch devices, press and hold a pin for a moment before dragging it &ndash; a quick swipe still pans the map.</li>
+            </ul>
+            <h4>About</h4>
+            <ul>
+                <li>Pitch Liner is open source &ndash; browse the code, report a bug or suggest a feature on <a href="https://github.com/eoincampbell/pitch-liner" target="_blank" rel="noopener">GitHub</a>.</li>
             </ul>
         </div>
     </div>
@@ -194,6 +211,18 @@
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="cancelLocationSwitch()">No</button>
                 <button class="btn btn-danger" onclick="confirmLocationSwitch()">Yes, clear and switch</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear all confirmation modal -->
+    <div class="modal-overlay" id="clear-confirm-modal">
+        <div class="modal-content modal-sm">
+            <h2>Clear All Paths?</h2>
+            <p>This will remove every pin and path currently on the map. Do you wish to continue?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="cancelClearAll()">No</button>
+                <button class="btn btn-danger" onclick="confirmClearAll()">Yes, clear all</button>
             </div>
         </div>
     </div>
@@ -226,6 +255,7 @@
     <script src="~/js/share.js" asp-append-version="true"></script>
     <script src="~/js/search.js" asp-append-version="true"></script>
     <script src="~/js/location.js" asp-append-version="true"></script>
+    <script src="~/js/keyboard.js" asp-append-version="true"></script>
     <script src="~/js/map-init.js" asp-append-version="true"></script>
 </body>
 </html>

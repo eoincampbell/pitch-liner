@@ -63,12 +63,7 @@
         if (e.target === this) closeHelp();
     });
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-            closeColorPicker();
-            closeHelp();
-        }
-    });
+    // Escape and all other keyboard shortcuts are handled in keyboard.js.
 
     function mapZoom(delta) {
         md.map.setCamera({ zoom: md.map.getCamera().zoom + delta });
