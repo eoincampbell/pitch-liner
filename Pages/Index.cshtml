@@ -55,6 +55,7 @@
                 <div class="btn-group">
                     <div class="btn-row">
                         <button class="btn btn-danger btn-sm" onclick="openClearConfirm()" title="Remove all paths and pins (asks for confirmation)">Clear All</button>
+                        <button class="btn btn-info btn-sm" onclick="startTour(true)" title="Take the guided tour">&#x1F9ED; Tour</button>
                         <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
                     </div>
                 </div>
@@ -196,6 +197,10 @@
                 <li>Two-finger rotate on touch; Ctrl + drag to rotate on desktop.</li>
                 <li>On touch devices, press and hold a pin for a moment before dragging it &ndash; a quick swipe still pans the map.</li>
             </ul>
+            <h4>Getting Started</h4>
+            <ul>
+                <li>New here? Click <strong>&#x1F9ED; Tour</strong> any time to replay the guided walkthrough of the core features.</li>
+            </ul>
             <h4>About</h4>
             <ul>
                 <li>Pitch Liner is open source &ndash; browse the code, report a bug or suggest a feature on <a href="https://github.com/eoincampbell/pitch-liner" target="_blank" rel="noopener">GitHub</a>.</li>
@@ -239,6 +244,9 @@
         </div>
     </div>
 
+    <!-- First-usage guided tour (populated dynamically by tour.js) -->
+    <div id="tour-root"></div>
+
     <!-- Toasts -->
     <div id="error-toast" class="toast"></div>
     <div id="success-toast" class="toast"></div>
@@ -256,6 +264,7 @@
     <script src="~/js/search.js" asp-append-version="true"></script>
     <script src="~/js/location.js" asp-append-version="true"></script>
     <script src="~/js/keyboard.js" asp-append-version="true"></script>
+    <script src="~/js/tour.js" asp-append-version="true"></script>
     <script src="~/js/map-init.js" asp-append-version="true"></script>
 </body>
 </html>

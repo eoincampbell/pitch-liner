@@ -366,6 +366,60 @@ kbd {
     color: #333;
 }
 
+/* First-usage tour (spotlight onboarding) */
+.tour-overlay-part {
+    position: fixed;
+    background: rgba(0,0,0,0.6);
+    z-index: 2500;
+}
+.tour-highlight-ring {
+    position: fixed;
+    z-index: 2501;
+    border-radius: 8px;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 6px #0b6cb5, 0 0 20px rgba(0,0,0,0.5);
+    pointer-events: none;
+    transition: top 0.15s ease, left 0.15s ease, width 0.15s ease, height 0.15s ease;
+}
+.tour-callout {
+    position: fixed;
+    z-index: 2502;
+    background: #fff;
+    color: #333;
+    border-radius: 10px;
+    padding: 16px 18px;
+    max-width: 300px;
+    width: 90vw;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    font-size: 14px;
+    line-height: 1.5;
+}
+.tour-step-counter {
+    font-size: 11px;
+    font-weight: 600;
+    color: #0b6cb5;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+}
+.tour-callout h3 { margin: 0 0 6px; font-size: 16px; }
+.tour-callout p { margin: 0; }
+.tour-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+}
+.tour-actions .btn { padding: 6px 12px; font-size: 12px; }
+.btn-link.tour-skip {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+}
+
 /* Toasts */
 .toast {
     display: none;
@@ -402,4 +456,5 @@ kbd {
     .map-ctrl-btn { width: 34px; height: 34px; font-size: 16px; }
     #debug-box { font-size: 10px; padding: 4px 6px; min-width: 120px; }
     #elevation-panel { max-width: 260px; }
+    .tour-callout { max-width: 240px; padding: 12px 14px; font-size: 13px; }
 }
