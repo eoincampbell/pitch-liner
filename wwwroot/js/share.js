@@ -52,6 +52,7 @@
         // Build compact data object
         var cam = md.map.getCamera();
         var payload = {
+            l: md.currentLocationId,
             v: [
                 +cam.center[0].toFixed(6),
                 +cam.center[1].toFixed(6),
@@ -173,6 +174,8 @@
     function restoreFromPayload(data) {
         if (!data || !data.p || !data.p.length) return;
 
+        md.applyLocation(data.l || md.DEFAULT_LOCATION_ID, { skipCamera: true });
+
         for (var pi = 0; pi < data.p.length; pi++) {
             var pathData = data.p[pi];
             if (pi > 0) {
@@ -205,7 +208,7 @@
             if (data.v.length >= 5) camOpts.pitch = data.v[4];
             md.map.setCamera(camOpts);
         } else if (md.paths[0].pins.length > 0) {
-            md.map.setCamera({ center: [md.paths[0].pins[0].lon, md.paths[0].pins[0].lat], zoom: md.DEFAULT_ZOOM });
+            md.map.setCamera({ center: [md.paths[0].pins[0].lon, md.paths[0].pins[0].lat], zoom: md.activeZoom() });
         }
     }
 

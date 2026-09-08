@@ -181,11 +181,26 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
-    width: 340px;
+    width: 500px;
     max-width: 90vw;
 }
+.search-row { display: flex; gap: 6px; }
+#location-select {
+    flex: 0 0 auto;
+    max-width: 45%;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
 #search-input {
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     padding: 10px 14px;
     border: none;
     border-radius: 6px;
@@ -276,6 +291,9 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 }
 .modal-content h2 { margin-top: 0; }
 .modal-content ul { padding-left: 20px; }
+.modal-content.modal-sm { max-width: 400px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.modal-actions .btn { padding: 8px 14px; font-size: 13px; }
 .modal-close {
     float: right;
     background: none;
@@ -314,7 +332,9 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     #branding { padding: 6px 10px; }
     #branding img { height: 30px; width: 30px; }
     #branding span { font-size: 12px; }
-    #search-bar { width: 200px; top: 60px; }
+    #search-bar { width: 240px; top: 60px; }
+    .search-row { flex-direction: column; gap: 4px; }
+    #location-select { max-width: 100%; font-size: 12px; padding: 8px 6px; }
     #search-input { font-size: 12px; padding: 8px 10px; }
     .map-ctrl-btn { width: 34px; height: 34px; font-size: 16px; }
     #elevation-panel { max-width: 260px; }

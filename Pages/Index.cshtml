@@ -88,7 +88,10 @@
 
     <!-- Search bar -->
     <div id="search-bar">
-        <input type="text" id="search-input" placeholder="Search for an address..." autocomplete="off" />
+        <div class="search-row">
+            <select id="location-select" title="Switch pitch location" aria-label="Pitch location"></select>
+            <input type="text" id="search-input" placeholder="Search for an address..." autocomplete="off" />
+        </div>
         <div id="search-results"></div>
     </div>
 
@@ -145,6 +148,13 @@
                 <li><strong>🗺</strong> – Toggle between satellite and road map view.</li>
                 <li>Right-click + drag to rotate and tilt the map (bearing &amp; pitch are saved in Share links).</li>
             </ul>
+            <h4>Locations</h4>
+            <ul>
+                <li>Use the dropdown beside the search bar to switch between club pitch locations.</li>
+                <li>The map opens on <strong>Ellenfield Park</strong> by default.</li>
+                <li>If pins or paths are on the map, you'll be asked to confirm before switching &ndash; confirming clears the map and recentres on the new location.</li>
+                <li>The selected location is included in Share links and saved CSV files, along with your exact map view.</li>
+            </ul>
             <h4>Search</h4>
             <ul>
                 <li>Type in the search bar to find addresses, landmarks, sports grounds, and points of interest.</li>
@@ -155,6 +165,18 @@
                 <li>Scroll wheel to zoom; pinch to zoom on touch devices.</li>
                 <li>Two-finger rotate on touch; Ctrl + drag to rotate on desktop.</li>
             </ul>
+        </div>
+    </div>
+
+    <!-- Location switch confirmation modal -->
+    <div class="modal-overlay" id="location-confirm-modal">
+        <div class="modal-content modal-sm">
+            <h2>Switch Location?</h2>
+            <p>Switching location will clear all pins and paths currently on the map. Do you wish to continue?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="cancelLocationSwitch()">No</button>
+                <button class="btn btn-danger" onclick="confirmLocationSwitch()">Yes, clear and switch</button>
+            </div>
         </div>
     </div>
 
@@ -172,6 +194,7 @@
     <script src="~/js/csv-io.js" asp-append-version="true"></script>
     <script src="~/js/share.js" asp-append-version="true"></script>
     <script src="~/js/search.js" asp-append-version="true"></script>
+    <script src="~/js/location.js" asp-append-version="true"></script>
     <script src="~/js/map-init.js" asp-append-version="true"></script>
 </body>
 </html>

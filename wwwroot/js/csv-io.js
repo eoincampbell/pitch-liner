@@ -9,7 +9,8 @@
         if (!hasData) return;
         // Save camera state as a metadata comment line
         var cam = md.map.getCamera();
-        var csv = '# view:' + cam.center[0].toFixed(6) + ',' + cam.center[1].toFixed(6) + ',' + cam.zoom.toFixed(2) + ',' + (cam.bearing || 0).toFixed(1) + ',' + (cam.pitch || 0).toFixed(1) + '\n';
+        var csv = '# location:' + md.currentLocationId + '\n';
+        csv += '# view:' + cam.center[0].toFixed(6) + ',' + cam.center[1].toFixed(6) + ',' + cam.zoom.toFixed(2) + ',' + (cam.bearing || 0).toFixed(1) + ',' + (cam.pitch || 0).toFixed(1) + '\n';
         csv += 'Path,Path Name,Closed,Pin #,Lat,Long,Distance from Previous Pin,Total Distance\n';
         for (var pi = 0; pi < md.paths.length; pi++) {
             var path = md.paths[pi];
@@ -49,10 +50,13 @@
 
                 // Parse optional camera metadata from comment lines
                 var savedView = null;
+                var savedLocationId = null;
                 while (lines.length > 0 && lines[0].charAt(0) === '#') {
                     var meta = lines.shift();
                     if (meta.indexOf('# view:') === 0) {
                         savedView = meta.substring(7).trim();
+                    } else if (meta.indexOf('# location:') === 0) {
+                        savedLocationId = meta.substring(11).trim();
                     }
                 }
 
@@ -65,6 +69,10 @@
                 }
 
                 md.clearAll();
+
+                if (savedLocationId) {
+                    md.applyLocation(savedLocationId, { skipCamera: true });
+                }
 
                 for (var i = 1; i < lines.length; i++) {
                     // Handle quoted fields (path names may contain commas)
@@ -148,7 +156,7 @@
                 } else {
                     var firstPin = md.paths[0].pins[0];
                     if (firstPin) {
-                        md.map.setCamera({ center: [firstPin.lon, firstPin.lat], zoom: md.DEFAULT_ZOOM });
+                        md.map.setCamera({ center: [firstPin.lon, firstPin.lat], zoom: md.activeZoom() });
                     }
                 }
             } catch (err) {

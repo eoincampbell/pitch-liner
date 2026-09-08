@@ -26,7 +26,7 @@
     }
 
     function resetView() {
-        md.map.setCamera({ center: md.DEFAULT_CENTER, zoom: md.DEFAULT_ZOOM });
+        md.map.setCamera({ center: md.activeCenter(), zoom: md.activeZoom() });
         md.map.setStyle({ style: md.DEFAULT_STYLE });
     }
 

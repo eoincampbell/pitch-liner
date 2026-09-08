@@ -60,7 +60,7 @@
                                 }
                                 div.textContent = label;
                                 div.addEventListener('click', function () {
-                                    md.map.setCamera({ center: [item.position.lon, item.position.lat], zoom: md.DEFAULT_ZOOM });
+                                    md.map.setCamera({ center: [item.position.lon, item.position.lat], zoom: md.activeZoom() });
                                     searchResults.style.display = 'none';
                                     searchInput.value = label;
                                 });

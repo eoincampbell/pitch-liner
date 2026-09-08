@@ -8,9 +8,10 @@
     fetch('/api/maps/token')
         .then(function (r) { return r.json(); })
         .then(function (tokenData) {
+            md.currentLocationId = md.DEFAULT_LOCATION_ID;
             var map = new atlas.Map('map', {
-                center: md.DEFAULT_CENTER,
-                zoom: md.DEFAULT_ZOOM,
+                center: md.activeCenter(),
+                zoom: md.activeZoom(),
                 style: md.DEFAULT_STYLE,
                 authOptions: {
                     authType: 'subscriptionKey',
@@ -20,6 +21,7 @@
             md.map = map;
 
             map.events.add('ready', function () {
+                md.populateLocationSelect();
                 md.labelSource = new atlas.source.DataSource();
                 map.sources.add(md.labelSource);
 

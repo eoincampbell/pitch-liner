@@ -4,8 +4,30 @@
 var MapDistance = (function () {
     'use strict';
 
-    var DEFAULT_CENTER = [-6.241229, 53.386252];
-    var DEFAULT_ZOOM = 18;
+    // Configurable venue list. Add or amend entries here to change the
+    // locations offered in the location dropdown. Centres are [lon, lat].
+    var LOCATIONS = [
+        { id: 'ellenfield',  name: 'Ellenfield Park',   center: [-6.241229, 53.386252], zoom: 18 },
+        { id: 'collins-ave', name: 'Collins Ave Pitch', center: [-6.241105, 53.380961], zoom: 18 },
+        { id: 'cloghran',    name: 'Cloghran Pitch',    center: [-6.239898, 53.412840], zoom: 18 },
+        { id: 'lorcan',      name: 'Lorcan Green',      center: [-6.230036, 53.392869], zoom: 18 },
+        { id: 'belcamp',     name: 'Belcamp Park',      center: [-6.210329, 53.407263], zoom: 18 },
+        { id: 'st-aidans',   name: 'St. Aidans',        center: [-6.251518, 53.383338], zoom: 18 }
+    ];
+
+    var DEFAULT_LOCATION_ID = 'ellenfield';
+
+    function findLocation(id) {
+        for (var i = 0; i < LOCATIONS.length; i++) {
+            if (LOCATIONS[i].id === id) return LOCATIONS[i];
+        }
+        return null;
+    }
+
+    var DEFAULT_LOCATION = findLocation(DEFAULT_LOCATION_ID) || LOCATIONS[0];
+
+    var DEFAULT_CENTER = DEFAULT_LOCATION.center;
+    var DEFAULT_ZOOM = DEFAULT_LOCATION.zoom;
     var DEFAULT_STYLE = 'satellite_road_labels';
 
     var PATH_COLORS = [
@@ -30,6 +52,8 @@ var MapDistance = (function () {
     var MAX_CSV_ROWS = 10000;
 
     return {
+        LOCATIONS: LOCATIONS,
+        DEFAULT_LOCATION_ID: DEFAULT_LOCATION_ID,
         DEFAULT_CENTER: DEFAULT_CENTER,
         DEFAULT_ZOOM: DEFAULT_ZOOM,
         DEFAULT_STYLE: DEFAULT_STYLE,
@@ -43,12 +67,25 @@ var MapDistance = (function () {
         paths: [],
         currentPathIndex: 0,
         currentUnit: 'm',
+        currentLocationId: DEFAULT_LOCATION_ID,
 
         getPathColor: function (index) {
             return PATH_COLORS[index % PATH_COLORS.length];
         },
         curPath: function () {
             return this.paths[this.currentPathIndex];
+        },
+        getLocation: function (id) {
+            return findLocation(id);
+        },
+        getCurrentLocation: function () {
+            return findLocation(this.currentLocationId) || DEFAULT_LOCATION;
+        },
+        activeCenter: function () {
+            return this.getCurrentLocation().center;
+        },
+        activeZoom: function () {
+            return this.getCurrentLocation().zoom;
         }
     };
 })();
