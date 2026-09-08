@@ -7,12 +7,12 @@ var MapDistance = (function () {
     // Configurable venue list. Add or amend entries here to change the
     // locations offered in the location dropdown. Centres are [lon, lat].
     var LOCATIONS = [
-        { id: 'ellenfield',  name: 'Ellenfield Park',   center: [-6.241229, 53.386252], zoom: 18 },
-        { id: 'collins-ave', name: 'Collins Ave Pitch', center: [-6.241105, 53.380961], zoom: 18 },
-        { id: 'cloghran',    name: 'Cloghran Pitch',    center: [-6.239898, 53.412840], zoom: 18 },
-        { id: 'lorcan',      name: 'Lorcan Green',      center: [-6.230036, 53.392869], zoom: 18 },
-        { id: 'belcamp',     name: 'Belcamp Park',      center: [-6.210329, 53.407263], zoom: 18 },
-        { id: 'st-aidans',   name: 'St. Aidans',        center: [-6.251518, 53.383338], zoom: 18 }
+        { id: 'ellenfield',  name: 'Ellenfield Park',   center: [-6.241326, 53.385993], zoom: 17.8 },
+        { id: 'collins-ave', name: 'Collins Ave Pitch', center: [-6.242586, 53.380940], zoom: 18.2 },
+        { id: 'cloghran',    name: 'Cloghran Pitch',    center: [-6.240856, 53.412952], zoom: 18.6 },
+        { id: 'lorcan',      name: 'Lorcan Green',      center: [-6.231238, 53.393000], zoom: 18.6 },
+        { id: 'belcamp',     name: 'Belcamp Park',      center: [-6.212949, 53.407752], zoom: 17.2 },
+        { id: 'st-aidans',   name: 'St. Aidans',        center: [-6.252029, 53.383344], zoom: 18.2 }
     ];
 
     var DEFAULT_LOCATION_ID = 'ellenfield';
