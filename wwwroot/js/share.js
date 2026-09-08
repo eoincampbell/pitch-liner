@@ -70,6 +70,7 @@
             };
             if (md.paths[pi].name !== 'Path ' + (pi + 1)) pathData.n = md.paths[pi].name;
             if (md.paths[pi].shapeClosed) pathData.s = 1;
+            if (md.paths[pi].colorIndex !== payload.p.length) pathData.k = md.paths[pi].colorIndex;
             payload.p.push(pathData);
         }
 
@@ -195,6 +196,13 @@
             if (data.p[ci].s && md.paths[ci] && md.paths[ci].pins.length >= 3) {
                 md.currentPathIndex = ci;
                 window.closeShape();
+            }
+        }
+
+        // Restore per-path colours (absent 'k' keeps the default index-based colour)
+        for (var ki = 0; ki < data.p.length; ki++) {
+            if (typeof data.p[ki].k === 'number' && md.paths[ki]) {
+                md.setPathColor(ki, data.p[ki].k);
             }
         }
 

@@ -21,6 +21,48 @@
     function showHelp() { document.getElementById('help-modal').classList.add('active'); }
     function closeHelp() { document.getElementById('help-modal').classList.remove('active'); }
 
+    var colorPickerPathIndex = -1;
+
+    function closeColorPicker() {
+        colorPickerPathIndex = -1;
+        document.getElementById('color-picker-modal').classList.remove('active');
+    }
+
+    function openColorPicker(pathIndex) {
+        var path = md.paths[pathIndex];
+        if (!path) return;
+
+        colorPickerPathIndex = pathIndex;
+        document.getElementById('color-picker-path-name').textContent = 'Choose a colour for ' + path.name + '.';
+
+        var grid = document.getElementById('color-swatch-grid');
+        grid.innerHTML = '';
+
+        md.PATH_COLORS.forEach(function (c, i) {
+            var swatch = document.createElement('button');
+            swatch.type = 'button';
+            swatch.className = 'color-swatch' + (i === path.colorIndex ? ' selected' : '');
+            swatch.style.background = c.hex;
+            swatch.title = c.name;
+            swatch.setAttribute('aria-label', c.name);
+            swatch.addEventListener('click', function () {
+                md.setPathColor(colorPickerPathIndex, i);
+                closeColorPicker();
+            });
+            grid.appendChild(swatch);
+        });
+
+        document.getElementById('color-picker-modal').classList.add('active');
+    }
+
+    document.getElementById('color-picker-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeColorPicker();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeColorPicker();
+    });
+
     function mapZoom(delta) {
         md.map.setCamera({ zoom: md.map.getCamera().zoom + delta });
     }
@@ -48,6 +90,8 @@
     window.showSuccess = showSuccess;
     window.showHelp = showHelp;
     window.closeHelp = closeHelp;
+    window.openColorPicker = openColorPicker;
+    window.closeColorPicker = closeColorPicker;
     window.mapZoom = mapZoom;
     window.resetView = resetView;
     window.toggleStyle = toggleStyle;
@@ -55,4 +99,6 @@
 
     md.showError = showError;
     md.showSuccess = showSuccess;
+    md.openColorPicker = openColorPicker;
+    md.closeColorPicker = closeColorPicker;
 })(MapDistance);

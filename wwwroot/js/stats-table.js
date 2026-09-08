@@ -31,6 +31,22 @@
             var dot = document.createElement('span');
             dot.className = 'color-dot';
             dot.style.background = colors.hex;
+            dot.title = 'Click to change colour';
+            dot.setAttribute('role', 'button');
+            dot.setAttribute('tabindex', '0');
+            dot.setAttribute('aria-label', 'Change colour of ' + path.name);
+            (function (pathIndex) {
+                dot.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    md.openColorPicker(pathIndex);
+                });
+                dot.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        md.openColorPicker(pathIndex);
+                    }
+                });
+            })(pi);
             header.appendChild(dot);
 
             var nameSpan = document.createElement('span');

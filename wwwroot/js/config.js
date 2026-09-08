@@ -30,16 +30,33 @@ var MapDistance = (function () {
     var DEFAULT_ZOOM = DEFAULT_LOCATION.zoom;
     var DEFAULT_STYLE = 'satellite_road_labels';
 
+    // Path colour palette. Each entry drives the line stroke, the polygon fill,
+    // the shape label halo and a custom SVG marker pin registered at map startup.
+    // 'pin' must match the sprite id created in map-init.js ('pin-' + index).
     var PATH_COLORS = [
-        { line: '#ff0000', pin: 'marker-red',     hex: '#ff0000' },
-        { line: '#1e90ff', pin: 'marker-blue',    hex: '#1e90ff' },
-        { line: '#32cd32', pin: 'marker-darkblue', hex: '#32cd32' },
-        { line: '#ff8c00', pin: 'marker-red',     hex: '#ff8c00' },
-        { line: '#ff00ff', pin: 'marker-blue',    hex: '#ff00ff' },
-        { line: '#00ced1', pin: 'marker-darkblue', hex: '#00ced1' },
-        { line: '#ffd700', pin: 'marker-red',     hex: '#ffd700' },
-        { line: '#8a2be2', pin: 'marker-blue',    hex: '#8a2be2' }
+        { name: 'Red',     line: '#e6194b', pin: 'pin-0',  hex: '#e6194b' },
+        { name: 'Blue',    line: '#1e90ff', pin: 'pin-1',  hex: '#1e90ff' },
+        { name: 'Green',   line: '#3cb44b', pin: 'pin-2',  hex: '#3cb44b' },
+        { name: 'Orange',  line: '#ff8c00', pin: 'pin-3',  hex: '#ff8c00' },
+        { name: 'Purple',  line: '#911eb4', pin: 'pin-4',  hex: '#911eb4' },
+        { name: 'Cyan',    line: '#00ced1', pin: 'pin-5',  hex: '#00ced1' },
+        { name: 'Magenta', line: '#f032e6', pin: 'pin-6',  hex: '#f032e6' },
+        { name: 'Lime',    line: '#bfef45', pin: 'pin-7',  hex: '#bfef45' },
+        { name: 'Teal',    line: '#008080', pin: 'pin-8',  hex: '#008080' },
+        { name: 'Brown',   line: '#9a6324', pin: 'pin-9',  hex: '#9a6324' },
+        { name: 'Navy',    line: '#4363d8', pin: 'pin-10', hex: '#4363d8' },
+        { name: 'Olive',   line: '#808000', pin: 'pin-11', hex: '#808000' },
+        { name: 'Coral',   line: '#fa8072', pin: 'pin-12', hex: '#fa8072' },
+        { name: 'Gold',    line: '#ffd700', pin: 'pin-13', hex: '#ffd700' },
+        { name: 'Violet',  line: '#8a2be2', pin: 'pin-14', hex: '#8a2be2' },
+        { name: 'Slate',   line: '#708090', pin: 'pin-15', hex: '#708090' }
     ];
+
+    // Opacity applied to the polygon fill of a closed shape.
+    var FILL_OPACITY = 0.25;
+
+    // Secondary (outline) colour used when generating the custom SVG marker pins.
+    var PIN_OUTLINE_COLOR = '#ffffff';
 
     var UNIT_CONFIG = {
         m:  { label: 'm',  factor: 1 },
@@ -58,6 +75,8 @@ var MapDistance = (function () {
         DEFAULT_ZOOM: DEFAULT_ZOOM,
         DEFAULT_STYLE: DEFAULT_STYLE,
         PATH_COLORS: PATH_COLORS,
+        FILL_OPACITY: FILL_OPACITY,
+        PIN_OUTLINE_COLOR: PIN_OUTLINE_COLOR,
         UNIT_CONFIG: UNIT_CONFIG,
         MAX_CSV_SIZE: MAX_CSV_SIZE,
         MAX_CSV_ROWS: MAX_CSV_ROWS,
@@ -71,6 +90,14 @@ var MapDistance = (function () {
 
         getPathColor: function (index) {
             return PATH_COLORS[index % PATH_COLORS.length];
+        },
+        getPathColorIndexByHex: function (hex) {
+            if (!hex) return -1;
+            var target = String(hex).trim().toLowerCase();
+            for (var i = 0; i < PATH_COLORS.length; i++) {
+                if (PATH_COLORS[i].hex.toLowerCase() === target) return i;
+            }
+            return -1;
         },
         curPath: function () {
             return this.paths[this.currentPathIndex];

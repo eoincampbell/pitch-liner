@@ -17,6 +17,11 @@
             closingLineSource: null,
             fillSource: null,
             shapeLabelSource: null,
+            fillLayer: null,
+            lineLayer: null,
+            closingLayer: null,
+            symbolLayer: null,
+            shapeLabelLayer: null,
             layerIds: [],
             colorIndex: index
         };
@@ -37,7 +42,7 @@
 
         var fillLayer = new atlas.layer.PolygonLayer(path.fillSource, null, {
             fillColor: colors.hex,
-            fillOpacity: 0.25
+            fillOpacity: md.FILL_OPACITY
         });
         var lineLayer = new atlas.layer.LineLayer(path.lineSource, null, {
             strokeColor: colors.line, strokeWidth: 2, strokeDashArray: [4, 4]
@@ -72,6 +77,11 @@
         var labelLayer = md.map.layers.getLayerById('labelLayer');
         if (labelLayer) md.map.layers.move(labelLayer);
 
+        path.fillLayer = fillLayer;
+        path.lineLayer = lineLayer;
+        path.closingLayer = closingLayer;
+        path.symbolLayer = symbolLayer;
+        path.shapeLabelLayer = shapeLabelLayer;
         path.layerIds = [fillLayer.getId(), lineLayer.getId(), closingLayer.getId(), symbolLayer.getId(), shapeLabelLayer.getId()];
     }
 
@@ -168,6 +178,41 @@
         md.drawElevationChart();
     }
 
+    function setPathColor(pathIndex, colorIndex) {
+        if (pathIndex < 0 || pathIndex >= md.paths.length) return;
+        if (colorIndex < 0 || colorIndex >= md.PATH_COLORS.length) return;
+
+        var path = md.paths[pathIndex];
+        path.colorIndex = colorIndex;
+        var colors = md.getPathColor(colorIndex);
+
+        if (path.fillLayer) path.fillLayer.setOptions({ fillColor: colors.hex, fillOpacity: md.FILL_OPACITY });
+        if (path.lineLayer) path.lineLayer.setOptions({ strokeColor: colors.line });
+        if (path.closingLayer) path.closingLayer.setOptions({ strokeColor: colors.line });
+        if (path.symbolLayer) {
+            path.symbolLayer.setOptions({
+                iconOptions: { image: colors.pin, size: 0.7, anchor: 'bottom', allowOverlap: true }
+            });
+        }
+        if (path.shapeLabelLayer) {
+            path.shapeLabelLayer.setOptions({
+                textOptions: {
+                    textField: ['get', 'label'],
+                    offset: [0, 0],
+                    color: '#ffffff',
+                    haloColor: colors.hex,
+                    haloWidth: 2,
+                    size: 21,
+                    font: ['StandardFont-Bold'],
+                    allowOverlap: true
+                }
+            });
+        }
+
+        md.updateTable();
+        md.drawElevationChart();
+    }
+
     function clearAll() {
         for (var i = 1; i < md.paths.length; i++) {
             var p = md.paths[i];
@@ -196,6 +241,7 @@
         md.labelSource.clear();
         md.paths = [firstPath];
         md.currentPathIndex = 0;
+        setPathColor(0, 0);
 
         document.getElementById('stats-body').innerHTML = '';
         document.getElementById('area-info').style.display = 'none';
@@ -209,6 +255,7 @@
     window.undoLastPin = undoLastPin;
     window.clearAll = clearAll;
     window.setActivePath = setActivePath;
+    window.setPathColor = setPathColor;
 
     md.createPathObj = createPathObj;
     md.initPathSources = initPathSources;
@@ -216,4 +263,5 @@
     md.clearAll = clearAll;
     md.refreshActivePathUi = refreshActivePathUi;
     md.setActivePath = setActivePath;
+    md.setPathColor = setPathColor;
 })(MapDistance);

@@ -11,15 +11,16 @@
         var cam = md.map.getCamera();
         var csv = '# location:' + md.currentLocationId + '\n';
         csv += '# view:' + cam.center[0].toFixed(6) + ',' + cam.center[1].toFixed(6) + ',' + cam.zoom.toFixed(2) + ',' + (cam.bearing || 0).toFixed(1) + ',' + (cam.pitch || 0).toFixed(1) + '\n';
-        csv += 'Path,Path Name,Closed,Pin #,Lat,Long,Distance from Previous Pin,Total Distance\n';
+        csv += 'Path,Path Name,Closed,Pin #,Lat,Long,Distance from Previous Pin,Total Distance,Color\n';
         for (var pi = 0; pi < md.paths.length; pi++) {
             var path = md.paths[pi];
+            var pathHex = md.getPathColor(path.colorIndex).hex;
             for (var i = 0; i < path.pins.length; i++) {
                 var p = path.pins[i];
                 var safeName = '"' + path.name.replace(/"/g, '""') + '"';
                 csv += (pi + 1) + ',' + safeName + ',' + (path.shapeClosed ? 'Yes' : 'No') + ',' + (i + 1) + ',' + p.lat.toFixed(6) + ',' + p.lon.toFixed(6) + ',' +
                     (i === 0 ? 'N/A' : Math.round(p.distFromPrev) + 'm') + ',' +
-                    Math.round(p.totalDistance) + 'm\n';
+                    Math.round(p.totalDistance) + 'm,' + pathHex + '\n';
             }
         }
         var blob = new Blob([csv], { type: 'text/csv' });
@@ -64,6 +65,7 @@
                 var hasPathCol = header.indexOf('path') !== -1;
                 var hasNameCol = header.indexOf('path name') !== -1;
                 var hasClosedCol = header.indexOf('closed') !== -1;
+                var colorColIdx = header.split(',').indexOf('color');
                 if (header.indexOf('lat') === -1 || header.indexOf('long') === -1) {
                     throw new Error('CSV header must contain "Lat" and "Long" columns.');
                 }
@@ -130,6 +132,12 @@
                     if (closedVal.toLowerCase() === 'yes') {
                         md.paths[pathNum - 1]._shouldClose = true;
                     }
+                    if (colorColIdx !== -1 && cols.length > colorColIdx) {
+                        var parsedColorIdx = md.getPathColorIndexByHex(cols[colorColIdx]);
+                        if (parsedColorIdx !== -1) {
+                            md.paths[pathNum - 1]._colorIndex = parsedColorIdx;
+                        }
+                    }
                     md.currentPathIndex = pathNum - 1;
                     md.addPin(lat, lon);
                 }
@@ -139,6 +147,13 @@
                         md.currentPathIndex = ci;
                         window.closeShape();
                         delete md.paths[ci]._shouldClose;
+                    }
+                }
+                // Restore per-path colours (falls back to index-based colour when absent)
+                for (var kc = 0; kc < md.paths.length; kc++) {
+                    if (typeof md.paths[kc]._colorIndex === 'number') {
+                        md.setPathColor(kc, md.paths[kc]._colorIndex);
+                        delete md.paths[kc]._colorIndex;
                     }
                 }
                 md.setActivePath(md.paths.length - 1);

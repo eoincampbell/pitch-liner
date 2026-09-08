@@ -123,6 +123,7 @@
             <ul>
                 <li><strong>&#x2795; Path</strong> – Create a new path with a unique colour.</li>
                 <li>Click a path name in the panel to rename it.</li>
+                <li>Click the coloured dot beside a path name to pick a different colour from the palette.</li>
                 <li>Use the <em>Set Active</em> button to switch between paths.</li>
             </ul>
             <h4>Drawing Controls</h4>
@@ -176,6 +177,18 @@
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="cancelLocationSwitch()">No</button>
                 <button class="btn btn-danger" onclick="confirmLocationSwitch()">Yes, clear and switch</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Path colour picker modal -->
+    <div class="modal-overlay" id="color-picker-modal">
+        <div class="modal-content modal-sm">
+            <h2>Path Colour</h2>
+            <p id="color-picker-path-name"></p>
+            <div id="color-swatch-grid"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeColorPicker()">Cancel</button>
             </div>
         </div>
     </div>
