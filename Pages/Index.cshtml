@@ -55,7 +55,7 @@
                 <div class="btn-group">
                     <div class="btn-row">
                         <button class="btn btn-danger btn-sm" onclick="openClearConfirm()" title="Remove all paths and pins (asks for confirmation)">Clear All</button>
-                        <button class="btn btn-info btn-sm" onclick="startTour(true)" title="Take the guided tour">&#x1F9ED; Tour</button>
+                        <button class="btn btn-pink btn-sm" onclick="startTour(true)" title="Take the guided tour">&#x1F9ED; Tour</button>
                         <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
                     </div>
                 </div>
@@ -64,10 +64,13 @@
 
                 <!-- Options -->
                 <div class="panel-options-row">
-                    <label class="option-toggle" title="Show pin numbers on map">
-                        <input type="checkbox" id="show-labels" onchange="toggleLabels()" />
-                        <span class="toggle-slider"></span>
-                        <span class="option-text">Pin Labels</span>
+                    <label class="option-select" title="Pin label mode">
+                        <span class="option-text">Labels</span>
+                        <select id="label-mode-select" onchange="changeLabelMode()">
+                            <option value="off" selected>Off</option>
+                            <option value="individual">Single Dist.</option>
+                            <option value="cumulative">Cumul. Dist</option>
+                        </select>
                     </label>
                     <label class="option-select" title="Distance unit">
                         <span class="option-text">Unit</span>

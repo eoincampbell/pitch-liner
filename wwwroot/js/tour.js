@@ -13,7 +13,7 @@
         {
             target: null,
             title: 'Welcome to Pitch Liner',
-            body: 'This is a pitch-liner application for Whitehall Colmcille GAA. It lets you measure distances and areas on a satellite map.'
+            body: 'The Whitehall Colmcille GAA Pitch Liner App lets you find our venues and mark out lines and areas for laying out juvenile pitches and training zones.'
         },
         {
             target: '#map',
@@ -28,7 +28,8 @@
         {
             target: '#location-select',
             title: 'Switch locations',
-            body: 'The dropdown picker quickly lets you jump between multiple locations.'
+            body: 'You can quickly jump between our various pitch locations or search for other venues.',
+            targetGroup: '#location-select, #search-input'
         },
         {
             target: '.btn-success[onclick="saveCsv()"]',
@@ -39,7 +40,7 @@
         {
             target: '.btn-info[onclick="showHelp()"]',
             title: 'Need more help?',
-            body: 'Click the help button to find out more.'
+            body: 'Click the help button to find out other features like keyboard shortcuts, path labeling, path distance options, color palettes and more.'
         }
     ];
 

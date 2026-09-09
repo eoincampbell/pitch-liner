@@ -121,6 +121,8 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 .btn-dark:hover { background: #23272b; }
 .btn-purple { background: #6f42c1; }
 .btn-purple:hover { background: #5a32a3; }
+.btn-pink { background: #e83e8c; }
+.btn-pink:hover { background: #d63384; }
 
 /* Button groups */
 .btn-group { margin-top: 8px; }
@@ -165,6 +167,7 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
     cursor: pointer;
 }
 .option-select select:focus { outline: 1px solid #0d6efd; }
+.option-select select option { color: #000; background: #fff; }
 
 #area-info { margin-top: 6px; padding: 6px 8px; background: rgba(255,255,255,0.1); border-radius: 4px; display: none; }
 

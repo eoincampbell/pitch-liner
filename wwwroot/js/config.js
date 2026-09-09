@@ -87,6 +87,7 @@ var MapDistance = (function () {
         currentPathIndex: 0,
         currentUnit: 'm',
         currentLocationId: DEFAULT_LOCATION_ID,
+        labelMode: 'off',
 
         getPathColor: function (index) {
             return PATH_COLORS[index % PATH_COLORS.length];

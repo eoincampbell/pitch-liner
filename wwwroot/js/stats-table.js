@@ -134,7 +134,10 @@
             for (var i = 0; i < path.pins.length; i++) {
                 var p = path.pins[i];
                 var text = multiPath ? path.name + ': Pin ' + (i + 1) : 'Pin ' + (i + 1);
-                if (i > 0) text += ' (' + formatDist(p.totalDistance) + ')';
+                if (i > 0) {
+                    if (md.labelMode === 'individual') text += ' (' + formatDist(p.distFromPrev) + ')';
+                    else if (md.labelMode === 'cumulative') text += ' (' + formatDist(p.totalDistance) + ')';
+                }
                 md.labelSource.add(new atlas.data.Feature(
                     new atlas.data.Point([p.lon, p.lat]),
                     { label: text }
@@ -143,9 +146,10 @@
         }
     }
 
-    function toggleLabels() {
-        var visible = document.getElementById('show-labels').checked;
-        md.map.layers.getLayerById('labelLayer').setOptions({ visible: visible });
+    function changeLabelMode() {
+        md.labelMode = document.getElementById('label-mode-select').value;
+        md.map.layers.getLayerById('labelLayer').setOptions({ visible: md.labelMode !== 'off' });
+        updateLabels();
     }
 
     function changeUnit() {
@@ -156,7 +160,7 @@
         if (cp && cp.shapeClosed) window.updateAreaDisplay();
     }
 
-    window.toggleLabels = toggleLabels;
+    window.changeLabelMode = changeLabelMode;
     window.changeUnit = changeUnit;
 
     md.formatDist = formatDist;
