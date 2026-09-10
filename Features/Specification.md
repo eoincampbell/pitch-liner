@@ -83,12 +83,12 @@ The application was developed incrementally across four feature rounds, document
 
 | Feature | Description |
 |---|---|
-| Keyboard shortcuts | A new `wwwroot/js/keyboard.js` module owns all global shortcuts: `Shift + ?` opens help, `Esc` closes any open modal, `n` creates a new path, `z` undoes the last pin, `c` closes the active path, and `a` clears all paths. Keys are matched case-insensitively, ignored when `Ctrl`/`Alt`/`Meta` is held, ignored while focus is in an input/select/contenteditable, and (apart from `Esc` and `?`) ignored while a modal is open. |
-| Toast feedback | `n`, `z` and `c` show a success toast ("New path created", "Last action undone", "Path closed") only when the action actually changed state. |
-| Clear-all confirmation | The `a` shortcut and the existing **Clear All** button both open a new `#clear-confirm-modal`, following the location-switch modal pattern. Confirming clears the map and shows an "All paths cleared" toast; cancelling or clicking the backdrop dismisses it. |
+| Keyboard shortcuts | A new `wwwroot/js/keyboard.js` module owns all global shortcuts: `Shift + ?` opens help, `Esc` closes any open modal, `a` adds a new path, `z` undoes the last pin, `e` encloses the active path, and `c` clears all paths. Keys are matched case-insensitively, ignored when `Ctrl`/`Alt`/`Meta` is held, ignored while focus is in an input/select/contenteditable, and (apart from `Esc` and `?`) ignored while a modal is open. |
+| Toast feedback | `a`, `z` and `e` show a success toast ("Path added", "Last action undone", "Path enclosed") only when the action actually changed state. |
+| Clear-all confirmation | The `c` shortcut and the existing **Clear All** button both open a new `#clear-confirm-modal`, following the location-switch modal pattern. Confirming clears the map and shows an "All paths cleared" toast; cancelling or clicking the backdrop dismisses it. |
 | Single Escape owner | The duplicate `Escape` handler was removed from `ui.js`; `keyboard.js` now closes the help, colour-picker, location-confirm and clear-confirm modals. |
-| Refreshed help content | The help modal opens with a keyboard shortcut table (styled with `kbd` / `.shortcut-table`), and the pin dragging, location dropdown, path colour picker and Clear All sections were updated to match current behaviour. |
-| GitHub link | An **About** section links to the project repository at `https://github.com/eoincampbell/pitch-liner`. |
+| Refreshed help content | The help modal opens with a keyboard shortcut table (styled with `kbd` / `.shortcut-table`), and the pin dragging, location dropdown, path colour picker and Clear All sections were updated to match current behaviour. The former "Close Path" button/label was renamed to **Enclose Path** for consistency with the `e` shortcut and toast wording. |
+| GitHub links | An **About** section links to the project repository at `https://github.com/eoincampbell/pitch-liner` and the issue tracker at `https://github.com/eoincampbell/pitch-liner/issues`. |
 
 ### 2.8 Future Ideas *(Future Ideas.md)*
 
@@ -278,5 +278,5 @@ Paths are separated by `|`, pins within a path by `;`.
 | 004 | `004 Multiple Lines.md` | Multiple paths with distinct colours, separate stats, independent totals, overall total, multi-path CSV and URL sharing |
 | 017 | `017 Misc UX Improvements.md` | Click-outside/Escape dismissal for the help modal, opt-in `?debug=1` camera info box, stats panel controls anchored to the bottom with only path info scrolling |
 | 018 | `018 Moving a Pin.md` | Click-and-hold (or long-press on touch) to drag any existing pin in any path, with live line updates and full recalculation of distances, stats, closed-shape area and elevation on drop |
-| 019 | `019 Help & Usability Cleanup.md` | Refreshed help modal with a keyboard shortcut table and GitHub link, global shortcuts (`Shift + ?`, `Esc`, `n`, `z`, `c`, `a`) with toast feedback, and a confirmation modal for clearing all paths |
+| 019 | `019 Help & Usability Cleanup.md` | Refreshed help modal with a keyboard shortcut table and GitHub repo/issues links, global shortcuts (`Shift + ?`, `Esc`, `a`, `z`, `e`, `c`) with toast feedback, a confirmation modal for clearing all paths, and renamed the "Close Path" button to "Enclose Path" |
 | — | `Future Ideas.md` | PWA offline support, named measurement sessions *(not yet implemented)* |

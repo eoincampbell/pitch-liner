@@ -4,10 +4,10 @@
  * Shortcuts (ignored while typing in a field, and while a modal is open only Escape acts):
  *   Shift + ?  Open the help modal
  *   Esc        Close any open modal
- *   n          New path
+ *   a          Add a new path
  *   z          Undo the last pin
- *   c          Close the active path (shape)
- *   a          Clear all paths (with confirmation)
+ *   e          Enclose the active path (shape)
+ *   c          Clear all paths (with confirmation)
  */
 (function (md) {
     'use strict';
@@ -74,21 +74,21 @@
         if (anyModalOpen()) return;
 
         switch (e.key.toLowerCase()) {
-            case 'n':
+            case 'a':
                 if (md.curPath().pins.length === 0) return;
                 window.newPath();
-                md.showSuccess('New path created');
+                md.showSuccess('Path added');
                 break;
             case 'z':
                 if (md.curPath().pins.length === 0) return;
                 window.undoLastPin();
                 md.showSuccess('Last action undone');
                 break;
-            case 'c':
+            case 'e':
                 window.closeShape();
-                if (md.curPath().shapeClosed) md.showSuccess('Path closed');
+                if (md.curPath().shapeClosed) md.showSuccess('Path enclosed');
                 break;
-            case 'a':
+            case 'c':
                 openClearConfirm();
                 break;
             default:

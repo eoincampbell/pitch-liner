@@ -22,8 +22,8 @@
         },
         {
             target: '.btn-dark[onclick="newPath()"]',
-            title: 'Start a new path',
-            body: 'Click "New Path" or press N to start a new path.'
+            title: 'Add a new path',
+            body: 'Click "Add Path" or press "A" to add a new path.'
         },
         {
             target: '#location-select',

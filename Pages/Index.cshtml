@@ -36,7 +36,7 @@
                     <div class="btn-row">
                         <button class="btn btn-dark" onclick="newPath()" title="Start a new path">&#x2795; Path</button>
                         <button class="btn btn-warning" onclick="undoLastPin()" title="Remove last pin">&#x21A9; Undo</button>
-                        <button class="btn btn-secondary" onclick="closeShape()" title="Close shape and calculate area">&#x25B3; Close</button>
+                        <button class="btn btn-secondary" onclick="closeShape()" title="Enclose shape and calculate area">&#x25B3; Enclose</button>
                     </div>
                 </div>
 
@@ -54,9 +54,9 @@
                 <!-- Actions group -->
                 <div class="btn-group">
                     <div class="btn-row">
-                        <button class="btn btn-danger btn-sm" onclick="openClearConfirm()" title="Remove all paths and pins (asks for confirmation)">Clear All</button>
-                        <button class="btn btn-pink btn-sm" onclick="startTour(true)" title="Take the guided tour">&#x1F9ED; Tour</button>
-                        <button class="btn btn-info btn-sm" onclick="showHelp()" title="Show help">? Help</button>
+                        <button class="btn btn-danger" onclick="openClearConfirm()" title="Remove all paths and pins (asks for confirmation)">&#x1F9FD; Clear All</button>
+                        <button class="btn btn-info" onclick="showHelp()" title="Show help">? Help</button>
+                        <button class="btn btn-pink" onclick="startTour(true)" title="Take the tour again">&#x1F9ED; Tour</button>
                     </div>
                 </div>
 
@@ -138,10 +138,10 @@
                 <tbody>
                     <tr><td><kbd>Shift</kbd> + <kbd>?</kbd></td><td>Open this help window.</td></tr>
                     <tr><td><kbd>Esc</kbd></td><td>Close any open window.</td></tr>
-                    <tr><td><kbd>n</kbd></td><td>Create a new path.</td></tr>
+                    <tr><td><kbd>a</kbd></td><td>Add a new path.</td></tr>
                     <tr><td><kbd>z</kbd></td><td>Undo the last action.</td></tr>
-                    <tr><td><kbd>c</kbd></td><td>Close the current active path.</td></tr>
-                    <tr><td><kbd>a</kbd></td><td>Clear all paths (asks for confirmation first).</td></tr>
+                    <tr><td><kbd>e</kbd></td><td>Enclose the current active path.</td></tr>
+                    <tr><td><kbd>c</kbd></td><td>Clear all paths (asks for confirmation first).</td></tr>
                 </tbody>
             </table>
             <p class="shortcut-note">A brief on-screen message confirms each action. Shortcuts are ignored while you are typing in the search bar or renaming a path.</p>
@@ -153,7 +153,7 @@
             </ul>
             <h4>Multiple Paths</h4>
             <ul>
-                <li><strong>&#x2795; Path</strong> – Create a new path with a unique colour (shortcut <kbd>n</kbd>).</li>
+                <li><strong>&#x2795; Path</strong> – Create a new path with a unique colour (shortcut <kbd>a</kbd>).</li>
                 <li>Click a path name in the panel to rename it.</li>
                 <li>Click the coloured dot beside a path name to open the colour picker and choose a different colour from the palette. Lines, pins, the shape fill and its label all change immediately.</li>
                 <li>Use the <em>Set Active</em> button to switch between paths – new pins are always added to the active path.</li>
@@ -161,8 +161,8 @@
             <h4>Drawing Controls</h4>
             <ul>
                 <li><strong>&#x21A9; Undo</strong> – Remove the last pin on the active path (shortcut <kbd>z</kbd>).</li>
-                <li><strong>&#x25B3; Close</strong> – Connect last pin to first, creating a closed shape with an area calculation (requires 3+ pins; shortcut <kbd>c</kbd>).</li>
-                <li><strong>Clear All</strong> – Remove every path and pin. You will be asked to confirm first (shortcut <kbd>a</kbd>).</li>
+                <li><strong>&#x25B3; Enclose Path</strong> – Connect last pin to first, creating a closed shape with an area calculation (requires 3+ pins; shortcut <kbd>e</kbd>).</li>
+                <li><strong>&#x1F9FD; Clear All</strong> – Remove every path and pin. You will be asked to confirm first (shortcut <kbd>c</kbd>).</li>
             </ul>
             <h4>Data Controls</h4>
             <ul>
@@ -206,7 +206,7 @@
             </ul>
             <h4>About</h4>
             <ul>
-                <li>Pitch Liner is open source &ndash; browse the code, report a bug or suggest a feature on <a href="https://github.com/eoincampbell/pitch-liner" target="_blank" rel="noopener">GitHub</a>.</li>
+                <li>Pitch Liner is open source &ndash; browse the <a href="https://github.com/eoincampbell/pitch-liner" target="_blank" rel="noopener">source on GitHub</a>, or report a bug or suggest a feature on the <a href="https://github.com/eoincampbell/pitch-liner/issues" target="_blank" rel="noopener">issue tracker</a>.</li>
             </ul>
         </div>
     </div>

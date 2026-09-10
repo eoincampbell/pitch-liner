@@ -15,11 +15,19 @@ I'd also like to add some keyboard short cuts, and make sure that all of them ar
 
 <Shift> + ? :Open the help modal
 esc: Close the help modal (if open)
-n: Create a new path (toast message: "New path created")
+a: Add a new path (toast message: "Path added")
 z: Undo the last action (toast message: "Last action undone")
-c: close the current active path (toast message: "Path closed")
-a: clear all paths 
+e: Enclose the current active path (toast message: "Path enclosed")
+c: Clear all paths (toast message: "All paths cleared")
 
-for 'n', 'z' and 'c' a small toast notification should appear on screen to 
-for 'a' a confirmation modal should appear asking the user if they are sure they want to clear all paths. If yes, clear all paths and show a toast message "All paths cleared". If no, cancel the action.
+for 'a', 'z' and 'e' a small toast notification should appear on screen to 
+for 'c' a confirmation modal should appear asking the user if they are sure they want to clear all paths. If yes, clear all paths and show a toast message "All paths cleared". If no, cancel the action.
 
+Please make sure that the 
+
+**Note**
+
+Currently the button for closing a path says "Close Path" but it should say "Enclose Path" to be consistent with the keyboard shortcut and the toast message.
+Please update the button text and any help text accordingly.
+
+Also if it's possible to add an "eraser" emoji to the "Clear All Paths" button, that would be a nice touch.

@@ -132,6 +132,7 @@
         pin.lat = e.position[1];
 
         md.rebuildPathGeometry(dragPath);
+        md.recalcPathDistances(dragPath);
         md.updateLabels();
         if (dragPath.shapeClosed) md.refreshClosedShape(dragPath);
     }
@@ -166,6 +167,7 @@
         setTimeout(function () { suppressNextClick = false; }, 400);
 
         md.recalcPathDistances(path);
+        md.updateLabels();
         if (path.shapeClosed) md.refreshClosedShape(path);
 
         var pathIndex = md.indexOfPath(path);
