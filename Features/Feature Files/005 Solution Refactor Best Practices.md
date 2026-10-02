@@ -12,5 +12,4 @@ You should also review all code and suggest any organisational refactoring that 
 
 You should also review the contents of the Specification.md markdown file in the Features directory.
 
-
 Once all these reviews are done, produce and present a step by step plan on how to implement the necessary changes.
